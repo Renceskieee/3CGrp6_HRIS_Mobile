@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'modals/about_modal.dart';
+import 'modals/contact_modal.dart';
+import 'modals/privacy_modal.dart';
 
 void main() {
   runApp(MyApp());
@@ -17,8 +20,22 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  LoginScreenState createState() => LoginScreenState();
+}
+
+class LoginScreenState extends State<LoginScreen> {
+  bool _isPasswordVisible = false;
+
+  void showModal(BuildContext context, Widget modal) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => modal,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +65,6 @@ class LoginScreen extends StatelessWidget {
               ),
               SizedBox(height: 0),
 
-              // Overlapping Image and Container using Stack
               Stack(
                 alignment: Alignment.topCenter,
                 clipBehavior: Clip.none,
@@ -60,7 +76,7 @@ class LoginScreen extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 135), // Adjust the distance here
+                    margin: EdgeInsets.only(top: 135),
                     width: MediaQuery.of(context).size.width,
                     padding: EdgeInsets.symmetric(horizontal: 30, vertical: 50),
                     decoration: BoxDecoration(
@@ -97,8 +113,9 @@ class LoginScreen extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 20),
+
                         TextField(
-                          obscureText: true,
+                          obscureText: !_isPasswordVisible,
                           decoration: InputDecoration(
                             labelText: "Password",
                             labelStyle: GoogleFonts.poppins(
@@ -110,16 +127,26 @@ class LoginScreen extends StatelessWidget {
                                 color: const Color.fromRGBO(163, 29, 29, 1),
                               ),
                             ),
-                            suffixIcon: Icon(
-                              Icons.visibility,
-                              color: const Color.fromRGBO(163, 29, 29, 1),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _isPasswordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: const Color.fromRGBO(163, 29, 29, 1),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _isPasswordVisible = !_isPasswordVisible;
+                                });
+                              },
                             ),
                           ),
                         ),
+
                         SizedBox(height: 15),
                         TextButton(
                           onPressed: () {
-                            // Forgot password action
+
                           },
                           child: Text(
                             "Forgot password?",
@@ -133,7 +160,7 @@ class LoginScreen extends StatelessWidget {
                         SizedBox(height: 20),
                         ElevatedButton(
                           onPressed: () {
-                            // Login action
+
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color.fromRGBO(163, 29, 29, 1),
@@ -158,7 +185,7 @@ class LoginScreen extends StatelessWidget {
                         SizedBox(height: 10),
                         OutlinedButton(
                           onPressed: () {
-                            // Sign up action
+
                           },
                           style: OutlinedButton.styleFrom(
                             backgroundColor: const Color.fromRGBO(229, 208, 172, 1),
@@ -181,13 +208,45 @@ class LoginScreen extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 100),
-                        Text(
-                          "About  |  Contact  |  Privacy Policy",
-                          style: GoogleFonts.poppins(
-                            fontSize: 12,
-                            color: const Color.fromRGBO(163, 29, 29, 1),
-                          ),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton(
+                              onPressed: () => showModal(context, AboutModal()),
+                              child: Text(
+                                "About",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  color: const Color.fromRGBO(163, 29, 29, 1),
+                                ),
+                              ),
+                            ),
+                            Text("|", style: GoogleFonts.poppins(fontSize: 12, color: const Color.fromRGBO(163, 29, 29, 1))),
+                            TextButton(
+                              onPressed: () => showModal(context, ContactModal()),
+                              child: Text(
+                                "Contact",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  color: const Color.fromRGBO(163, 29, 29, 1),
+                                ),
+                              ),
+                            ),
+                            Text("|", style: GoogleFonts.poppins(fontSize: 12, color: const Color.fromRGBO(163, 29, 29, 1))),
+                            TextButton(
+                              onPressed: () => showModal(context, PrivacyModal()),
+                              child: Text(
+                                "Privacy Policy",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  color: const Color.fromRGBO(163, 29, 29, 1),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
+
                         SizedBox(height: 20),
                         Text(
                           "© EARIST Human Resource Information System 2025",
