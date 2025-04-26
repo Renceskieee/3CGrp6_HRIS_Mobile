@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http; 
+import 'dart:developer' as developer;
+import 'dart:convert'; 
 import 'modals/about_modal.dart';
 import 'modals/contact_modal.dart';
 import 'modals/privacy_modal.dart';
+import 'pages/dashboard.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -14,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: LoginScreen(),
+      home: const LoginScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -29,11 +33,130 @@ class LoginScreen extends StatefulWidget {
 
 class LoginScreenState extends State<LoginScreen> {
   bool _isPasswordVisible = false;
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false; 
+  String _errorMessage = ''; 
 
   void showModal(BuildContext context, Widget modal) {
     showDialog(
       context: context,
       builder: (BuildContext context) => modal,
+    );
+  }
+
+  Future<void> _login() async {
+    final username = _usernameController.text.trim();
+    final password = _passwordController.text;
+
+    if (username.isEmpty || password.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Please enter both username and password.',
+            style: GoogleFonts.poppins(),
+          ),
+          backgroundColor: const Color.fromRGBO(163, 29, 29, 1),
+        ),
+      );
+      return; 
+    }
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = '';
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://localhost:5000/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'username': username,
+          'password': password,
+        }),
+      );
+
+      if (!mounted) return;
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        developer.log('Login successful: ${data['user']}');
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const DashboardScreen()),
+        );
+      } else {
+        final data = json.decode(response.body);
+        setState(() {
+          _errorMessage = data['message'];
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              _errorMessage,
+              style: GoogleFonts.poppins(),
+            ),
+            backgroundColor: const Color.fromRGBO(163, 29, 29, 1),
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = 'An error occurred. Please try again.';
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            _errorMessage,
+            style: GoogleFonts.poppins(),
+          ),
+          backgroundColor: const Color.fromRGBO(163, 29, 29, 1),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  void _forgotPassword() {
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Forgot Password',
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
+            'Please contact your system administrator to reset your password.',
+            style: GoogleFonts.poppins(),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'OK',
+                style: GoogleFonts.poppins(
+                  color: const Color.fromRGBO(163, 29, 29, 1),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -43,18 +166,18 @@ class LoginScreenState extends State<LoginScreen> {
       body: SingleChildScrollView(
         child: Container(
           width: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Color.fromRGBO(229, 208, 172, 1),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               Image.asset(
                 'assets/images/EARIST_Logo.png',
                 height: 100,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
                 "H.R.I.S.",
                 style: GoogleFonts.poppins(
@@ -63,8 +186,6 @@ class LoginScreenState extends State<LoginScreen> {
                   color: const Color.fromRGBO(163, 29, 29, 1),
                 ),
               ),
-              SizedBox(height: 0),
-
               Stack(
                 alignment: Alignment.topCenter,
                 clipBehavior: Clip.none,
@@ -76,11 +197,11 @@ class LoginScreenState extends State<LoginScreen> {
                     fit: BoxFit.cover,
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 135),
+                    margin: const EdgeInsets.only(top: 135),
                     width: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 50),
-                    decoration: BoxDecoration(
-                      color: const Color.fromRGBO(254, 249, 225, 1),
+                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
+                    decoration: const BoxDecoration(
+                      color: Color.fromRGBO(254, 249, 225, 1),
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(25),
                         topRight: Radius.circular(25),
@@ -97,34 +218,39 @@ class LoginScreenState extends State<LoginScreen> {
                             color: const Color.fromRGBO(163, 29, 29, 1),
                           ),
                         ),
-                        SizedBox(height: 40),
+                        const SizedBox(height: 40),
                         TextField(
+                          controller: _usernameController,
                           decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
                             labelText: "Username",
                             labelStyle: GoogleFonts.poppins(
                               color: const Color.fromRGBO(163, 29, 29, 1),
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide(
-                                color: const Color.fromRGBO(163, 29, 29, 1),
+                              borderSide: const BorderSide(
+                                color: Color.fromRGBO(163, 29, 29, 1),
                               ),
                             ),
                           ),
                         ),
-                        SizedBox(height: 20),
-
+                        const SizedBox(height: 20),
                         TextField(
+                          controller: _passwordController,
                           obscureText: !_isPasswordVisible,
                           decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
                             labelText: "Password",
                             labelStyle: GoogleFonts.poppins(
                               color: const Color.fromRGBO(163, 29, 29, 1),
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide(
-                                color: const Color.fromRGBO(163, 29, 29, 1),
+                              borderSide: const BorderSide(
+                                color: Color.fromRGBO(163, 29, 29, 1),
                               ),
                             ),
                             suffixIcon: IconButton(
@@ -142,78 +268,52 @@ class LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                         ),
-
-                        SizedBox(height: 15),
-                        TextButton(
-                          onPressed: () {
-
-                          },
-                          child: Text(
-                            "Forgot password?",
-                            style: GoogleFonts.poppins(
-                              color: const Color.fromRGBO(163, 29, 29, 1),
-                              fontStyle: FontStyle.italic,
-                              decoration: TextDecoration.underline,
+                        const SizedBox(height: 10),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: _forgotPassword,
+                            child: Text(
+                              "Forgot password?",
+                              style: GoogleFonts.poppins(
+                                color: const Color.fromRGBO(163, 29, 29, 1),
+                                fontStyle: FontStyle.italic,
+                                decoration: TextDecoration.underline,
+                              ),
                             ),
                           ),
                         ),
-                        SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: () {
-
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromRGBO(163, 29, 29, 1),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            side: BorderSide(
-                              color: const Color.fromRGBO(109, 35, 35, 1),
-                              width: 1,
-                            ),
-                            padding: EdgeInsets.symmetric(horizontal: 60, vertical: 15),
-                            minimumSize: Size(double.infinity, 50),
-                          ),
-                          child: Text(
-                            "Log in",
-                            style: GoogleFonts.poppins(
-                              fontSize: 18,
-                              color: const Color.fromRGBO(229, 208, 172, 1),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        OutlinedButton(
-                          onPressed: () {
-
-                          },
-                          style: OutlinedButton.styleFrom(
-                            backgroundColor: const Color.fromRGBO(229, 208, 172, 1),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            side: BorderSide(
-                              color: const Color.fromRGBO(163, 29, 29, 1),
-                              width: 1,
-                            ),
-                            padding: EdgeInsets.symmetric(horizontal: 60, vertical: 15),
-                            minimumSize: Size(double.infinity, 50),
-                          ),
-                          child: Text(
-                            "Sign Up",
-                            style: GoogleFonts.poppins(
-                              fontSize: 18,
-                              color: const Color.fromRGBO(163, 29, 29, 1),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 100),
-
+                        const SizedBox(height: 15),
+                        _isLoading
+                            ? const CircularProgressIndicator()
+                            : ElevatedButton(
+                                onPressed: _login,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color.fromRGBO(163, 29, 29, 1),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  side: const BorderSide(
+                                    color: Color.fromRGBO(109, 35, 35, 1),
+                                    width: 1,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
+                                  minimumSize: const Size(double.infinity, 50),
+                                ),
+                                child: Text(
+                                  "Log in",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 18,
+                                    color: const Color.fromRGBO(229, 208, 172, 1),
+                                  ),
+                                ),
+                              ),
+                        const SizedBox(height: 180),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             TextButton(
-                              onPressed: () => showModal(context, AboutModal()),
+                              onPressed: () => showModal(context, const AboutModal()),
                               child: Text(
                                 "About",
                                 style: GoogleFonts.poppins(
@@ -222,9 +322,12 @@ class LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                             ),
-                            Text("|", style: GoogleFonts.poppins(fontSize: 12, color: const Color.fromRGBO(163, 29, 29, 1))),
+                            Text("|",
+                                style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    color: const Color.fromRGBO(163, 29, 29, 1))),
                             TextButton(
-                              onPressed: () => showModal(context, ContactModal()),
+                              onPressed: () => showModal(context, const ContactModal()),
                               child: Text(
                                 "Contact",
                                 style: GoogleFonts.poppins(
@@ -233,9 +336,12 @@ class LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                             ),
-                            Text("|", style: GoogleFonts.poppins(fontSize: 12, color: const Color.fromRGBO(163, 29, 29, 1))),
+                            Text("|",
+                                style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    color: const Color.fromRGBO(163, 29, 29, 1))),
                             TextButton(
-                              onPressed: () => showModal(context, PrivacyModal()),
+                              onPressed: () => showModal(context, const PrivacyModal()),
                               child: Text(
                                 "Privacy Policy",
                                 style: GoogleFonts.poppins(
@@ -246,8 +352,7 @@ class LoginScreenState extends State<LoginScreen> {
                             ),
                           ],
                         ),
-
-                        SizedBox(height: 20),
+                        const SizedBox(height: 10),  // Add some space before the copyright
                         Text(
                           "© EARIST Human Resource Information System 2025",
                           style: GoogleFonts.poppins(
