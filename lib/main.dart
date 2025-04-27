@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http; 
 import 'dart:developer' as developer;
 import 'dart:convert'; 
+import 'modals/forgotpassword_modal.dart';
 import 'modals/about_modal.dart';
 import 'modals/contact_modal.dart';
 import 'modals/privacy_modal.dart';
@@ -131,34 +132,11 @@ class LoginScreenState extends State<LoginScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            'Forgot Password',
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          content: Text(
-            'Please contact your system administrator to reset your password.',
-            style: GoogleFonts.poppins(),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                'OK',
-                style: GoogleFonts.poppins(
-                  color: const Color.fromRGBO(163, 29, 29, 1),
-                ),
-              ),
-            ),
-          ],
-        );
+        return const ForgotPasswordModal();
       },
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -291,7 +269,7 @@ class LoginScreenState extends State<LoginScreen> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color.fromRGBO(163, 29, 29, 1),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(25),
                                   ),
                                   side: const BorderSide(
                                     color: Color.fromRGBO(109, 35, 35, 1),
@@ -308,7 +286,7 @@ class LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                               ),
-                        const SizedBox(height: 180),
+                        const SizedBox(height: 100),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -352,7 +330,7 @@ class LoginScreenState extends State<LoginScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 10),  // Add some space before the copyright
+                        const SizedBox(height: 10),  
                         Text(
                           "© EARIST Human Resource Information System 2025",
                           style: GoogleFonts.poppins(

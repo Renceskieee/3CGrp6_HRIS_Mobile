@@ -44,6 +44,7 @@ app.post('/login', (req, res) => {
     }
 
     const user = results[0];
+    console.log('User found:', user);
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
@@ -52,7 +53,12 @@ app.post('/login', (req, res) => {
 
     delete user.password;
 
-    res.json({ message: 'Login successful', user });
+    const userData = {
+      f_name: user.f_name,
+      p_pic: user.p_pic,
+    };
+
+    res.json({ message: 'Login successful', user: userData });
   });
 });
 

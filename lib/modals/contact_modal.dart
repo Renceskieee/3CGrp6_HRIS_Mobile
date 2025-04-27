@@ -30,7 +30,7 @@ class ContactModal extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(left: 28),
-            child: Text("quiniano.lp.bsinfotech@gmail.com", style: GoogleFonts.poppins()),
+            child: Text("mis.support@earist.edu.ph", style: GoogleFonts.poppins()),
           ),
           SizedBox(height: 12),
 
@@ -47,7 +47,7 @@ class ContactModal extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(left: 28),
-            child: Text("0915 612 8497", style: GoogleFonts.poppins()),
+            child: Text("(028) 243-9467", style: GoogleFonts.poppins()),
           ),
         ],
       ),
