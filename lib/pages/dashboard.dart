@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert'; // For JSON parsing
+import 'dart:convert';
 import 'package:hris_mobile/components/sidebar.dart';
-import 'package:logger/logger.dart';  // Import the logger package
+import 'package:logger/logger.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -18,13 +18,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String? firstName;
   String? profilePic;
 
-  // Logger instance
   final Logger _logger = Logger();
 
-  // Method to fetch user data after login
   Future<void> fetchUserData(String username, String password) async {
     final response = await http.post(
-      Uri.parse('http://localhost:5000/login'), // Adjust URL as per your server
+      Uri.parse('http://localhost:5000/login'),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -35,15 +33,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
 
     if (response.statusCode == 200) {
-      // Parse the response body
       final data = json.decode(response.body);
       setState(() {
-        firstName = data['user']['f_name']; // User's first name
-        profilePic = data['user']['p_pic']; // Profile picture (URL or path)
+        firstName = data['user']['f_name'];
+        profilePic = data['user']['p_pic'];
       });
       _logger.i('Login successful: ${data['user']}');
     } else {
-      // Handle login failure
       _logger.e('Login failed: ${response.body}');
     }
   }
@@ -51,7 +47,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    // Replace with valid credentials or implement a login form to get user input
     fetchUserData('hanapot', '145116');
   }
 
@@ -101,33 +96,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            const Spacer(),  // This will push the profile section to the far right
-            // Profile picture or initials on the right side
-            GestureDetector(
+          ],
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 25.0),
+            child: GestureDetector(
               onTap: () {
-                // Handle tap (for profile settings, logout, etc.)
               },
               child: CircleAvatar(
                 radius: 20,
-                backgroundColor: Colors.grey[300],
+                backgroundColor: const Color.fromRGBO(254, 249, 225, 1),
                 child: profilePic != null
                     ? ClipOval(
                         child: Image.network(
-                          profilePic!,  // Use the profile image URL from the API
-                          width: 40,
-                          height: 40,
+                          profilePic!,
+                          width: 35,
+                          height: 35,
                           fit: BoxFit.cover,
                         ),
                       )
                     : Text(
-                        firstName != null ? firstName![0] : '', // Use first letter of name if no image
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        firstName != null ? firstName![0] : '',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.normal,
+                        ),
                       ),
               ),
             ),
-            const SizedBox(width: 10),
-          ],
-        ),
+          ),
+        ],
       ),
       body: Stack(
         children: [
