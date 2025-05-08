@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hris_mobile/modals/logout_modal.dart';
+import 'package:hris_mobile/pages/login.dart';
 
 class Sidebar extends StatefulWidget {
   final int activeIndex;
@@ -24,7 +26,7 @@ class _SidebarState extends State<Sidebar> {
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      width: widget.isExpanded ? 250 : 80,
+      width: widget.isExpanded ? 300 : 80,
       decoration: const BoxDecoration(
         color: Color.fromRGBO(254, 249, 225, 1),
         border: Border(
@@ -44,10 +46,10 @@ class _SidebarState extends State<Sidebar> {
           const Divider(),
           _buildDropdownToggle(),
           if (isFormsExpanded && widget.isExpanded) ...[
-            _buildSubItem(5, "Employee's Leave"),
-            _buildSubItem(6, "Employee's Leave Card"),
+            _buildSubItem(5, "Employee's Leave Card"),
+            _buildSubItem(6, "Employee's Leave Card Back"),
             _buildSubItem(7, "Employee's Leave Form"),
-            _buildSubItem(8, "Employee's Leave Back"),
+            _buildSubItem(8, "Employee's Leave Form Back"),
           ],
           _buildNavItem(3, 'assets/icons/settings.svg', 'Settings'),
           _buildNavItem(4, 'assets/icons/log-out.svg', 'Log Out'),
@@ -64,7 +66,18 @@ class _SidebarState extends State<Sidebar> {
       child: SizedBox(
         width: double.infinity,
         child: GestureDetector(
-          onTap: () => widget.onNavItemSelect(index),
+          onTap: () {
+            if (label == 'Log Out') {
+              showLogoutConfirmationDialog(context, () {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                  (Route<dynamic> route) => false,
+                );
+              });
+            } else {
+              widget.onNavItemSelect(index);
+            }
+          },
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
             decoration: BoxDecoration(
@@ -191,7 +204,18 @@ class _SidebarState extends State<Sidebar> {
       child: SizedBox(
         width: double.infinity,
         child: GestureDetector(
-          onTap: () => widget.onNavItemSelect(index),
+          onTap: () {
+            if (label == 'Log Out') {
+              showLogoutConfirmationDialog(context, () {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                  (Route<dynamic> route) => false,
+                );
+              });
+            } else {
+              widget.onNavItemSelect(index);
+            }
+          },
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
             decoration: BoxDecoration(

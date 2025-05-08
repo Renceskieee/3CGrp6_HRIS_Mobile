@@ -23,7 +23,12 @@ Future<void> showLogoutConfirmationDialog(BuildContext context, VoidCallback onC
               Navigator.of(context).pop();
               onConfirm();
             },
-            child: const Text('Log Out'),
+            child: const Text(
+              'Log Out',
+              style: TextStyle(
+                color: Color.fromRGBO(254, 249, 225, 1),
+              ),
+            ),
           ),
         ],
       );

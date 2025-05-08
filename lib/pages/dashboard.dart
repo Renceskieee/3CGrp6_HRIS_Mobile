@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:hris_mobile/components/sidebar.dart';
 import 'package:logger/logger.dart';
+import 'leave_form.dart';
+import './settings.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -22,7 +24,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> fetchUserData(String username, String password) async {
     final response = await http.post(
-      Uri.parse('http://localhost:5000/login'),
+      Uri.parse('http://192.168.99.139:3000/login'),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -36,7 +38,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       final data = json.decode(response.body);
       setState(() {
         firstName = data['user']['f_name'];
-        profilePic = data['user']['p_pic'];
+        profilePic = 'http://192.168.99.139:3000/uploads/${data['user']['p_pic']}';
       });
       _logger.i('Login successful: ${data['user']}');
     } else {
@@ -47,7 +49,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    fetchUserData('hanapot', '145116');
+    fetchUserData('Rency', 'Laurence027');
   }
 
   void toggleSidebar() {
@@ -60,6 +62,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
     setState(() {
       activeNavIndex = index;
     });
+  }
+
+  Widget _buildContent() {
+    switch (activeNavIndex) {
+      case 3:
+        return const SettingsPage(userId: 4);
+      case 7:
+        return const LeaveForm();
+      default:
+        return const Center(
+          child: Text(
+            'Coming Soon...',
+            style: TextStyle(fontSize: 24),
+          ),
+        );
+    }
   }
 
   @override
@@ -130,23 +148,38 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       body: Stack(
         children: [
-          Sidebar(
-            isExpanded: isSidebarExpanded,
-            activeIndex: activeNavIndex,
-            onNavItemSelect: handleNavItemSelect,
-          ),
-          Positioned.fill(
-            left: isSidebarExpanded ? 200.0 : 80.0,
-            child: Column(
-              children: const [
-                Expanded(
-                  child: Center(
-                    child: SizedBox(),
-                  ),
+          Row(
+            children: [
+              SizedBox(
+                width: 80,
+                child: Sidebar(
+                  isExpanded: false,
+                  activeIndex: activeNavIndex,
+                  onNavItemSelect: handleNavItemSelect,
                 ),
-              ],
-            ),
+              ),
+              Expanded(
+                child: Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.all(16),
+                  child: _buildContent(),
+                ),
+              ),
+            ],
           ),
+
+          if (isSidebarExpanded)
+            Positioned(
+              top: 0,
+              bottom: 0,
+              left: 0,
+              width: 300,
+              child: Sidebar(
+                isExpanded: true,
+                activeIndex: activeNavIndex,
+                onNavItemSelect: handleNavItemSelect,
+              ),
+            ),
         ],
       ),
     );

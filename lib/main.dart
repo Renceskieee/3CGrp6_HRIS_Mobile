@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../pages/login.dart';
 import '../pages/dashboard.dart';
+import '../pages/leave_form.dart';
+import '../pages/settings.dart';
 
 void main() => runApp(const EARISTHRIS());
 
@@ -22,6 +24,8 @@ class EARISTHRIS extends StatelessWidget {
           routes: {
             '/login': (context) => const LoginScreen(),
             '/dashboard': (context) => const DashboardScreen(),
+            '/settings': (context) => SettingsPage(userId: 4),
+            '/leave_form': (context) => const LeaveForm(),
           },
         );
       },
