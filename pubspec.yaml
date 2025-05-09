@@ -71,6 +71,8 @@ flutter:
     - assets/icons/log-out.svg
     - assets/icons/forms.svg
     - assets/icons/form.svg
+    - assets/icons/home.svg
+    - assets/icons/user.svg
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

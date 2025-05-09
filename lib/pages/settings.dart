@@ -20,7 +20,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
   TextEditingController fNameController = TextEditingController();
   TextEditingController lNameController = TextEditingController();
-
   TextEditingController emailController = TextEditingController();
   TextEditingController usernameController = TextEditingController();
   TextEditingController employeeNoController = TextEditingController();
@@ -158,7 +157,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   backgroundColor: const Color.fromRGBO(163, 29, 29, 1),
                   foregroundColor: const Color.fromRGBO(254, 249, 225, 1),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
+                    borderRadius: BorderRadius.circular(50),
                   ),
                 ),
                 onPressed: updateProfile,
@@ -195,10 +194,10 @@ class _SettingsPageState extends State<SettingsPage> {
         filled: true,
         fillColor: enabled ? Colors.white : Colors.grey.shade100,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: BorderRadius.circular(50),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: BorderRadius.circular(50),
           borderSide: BorderSide(color: Colors.grey.shade300),
         ),
       ),
