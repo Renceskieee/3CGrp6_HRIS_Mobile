@@ -23,8 +23,12 @@ class EARISTHRIS extends StatelessWidget {
           initialRoute: '/login',
           routes: {
             '/login': (context) => const LoginScreen(),
-            '/dashboard': (context) => const DashboardScreen(),
-            '/settings': (context) => SettingsPage(userId: 4),
+            '/dashboard': (context) => const DashboardScreen(user: {}),
+            '/settings': (context) => SettingsPage(
+              user: const {},
+              onProfileUpdated: (Map<String, dynamic> updatedUser) {
+              },
+            ),
             '/leave_form': (context) => const LeaveForm(),
           },
         );

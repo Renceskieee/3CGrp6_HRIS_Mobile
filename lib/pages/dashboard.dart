@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:hris_mobile/components/navbar.dart';
-import 'package:logger/logger.dart';
 import './settings.dart';
+import 'package:hris_mobile/components/snackbar.dart';
 
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+  final Map<String, dynamic> user;
+
+  const DashboardScreen({super.key, required this.user});
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
@@ -15,34 +15,16 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   int activeNavIndex = 0;
-  String? firstName;
-  String? profilePic;
-
-  final Logger _logger = Logger();
-
-  Future<void> fetchUserData(String username, String password) async {
-    final response = await http.post(
-      Uri.parse('http://192.168.99.139:3000/login'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({'username': username, 'password': password}),
-    );
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      setState(() {
-        firstName = data['user']['f_name'];
-        profilePic = 'http://192.168.99.139:3000/uploads/${data['user']['p_pic']}';
-      });
-      _logger.i('Login successful: ${data['user']}');
-    } else {
-      _logger.e('Login failed: ${response.body}');
-    }
-  }
+  late Map<String, dynamic> user;
 
   @override
   void initState() {
     super.initState();
-    fetchUserData('Rency', 'Laurence027');
+    user = widget.user;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showCustomSnackBar(context, 'Welcome, ${user['f_name']} ${user['l_name']}');
+    });
   }
 
   void handleNavItemSelect(int index) {
@@ -51,10 +33,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
+  void refreshUserProfile(Map<String, dynamic> updatedUser) {
+    setState(() {
+      user = updatedUser;
+    });
+  }
+
   Widget _buildContent() {
     switch (activeNavIndex) {
       case 3:
-        return const SettingsPage(userId: 4);
+        return SettingsPage(
+          user: user,
+          onProfileUpdated: refreshUserProfile,
+        );
       default:
         return const Center(
           child: Text(
@@ -67,6 +58,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final profilePic = user['p_pic'] != null
+        ? 'http://192.168.99.139:3000/uploads/${user['p_pic']}'
+        : null;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(109, 35, 35, 1),
@@ -103,14 +98,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: profilePic != null
                   ? ClipOval(
                       child: Image.network(
-                        profilePic!,
+                        profilePic,
                         width: 35,
                         height: 35,
                         fit: BoxFit.cover,
                       ),
                     )
                   : Text(
-                      firstName != null ? firstName![0] : '',
+                      user['f_name']?[0] ?? '',
                       style: const TextStyle(fontSize: 24),
                     ),
             ),

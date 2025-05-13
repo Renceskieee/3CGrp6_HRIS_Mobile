@@ -1,15 +1,18 @@
 // ignore_for_file: use_build_context_synchronously
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:hris_mobile/components/snackbar.dart';
 
 class SettingsPage extends StatefulWidget {
-  final int userId;
+  final Map<String, dynamic> user;
+  final void Function(Map<String, dynamic>) onProfileUpdated;
 
-  const SettingsPage({super.key, required this.userId});
+  const SettingsPage({super.key, required this.user, required this.onProfileUpdated});
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -18,34 +21,39 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   final _formKey = GlobalKey<FormState>();
 
-  TextEditingController fNameController = TextEditingController();
-  TextEditingController lNameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController usernameController = TextEditingController();
-  TextEditingController employeeNoController = TextEditingController();
-  TextEditingController roleController = TextEditingController();
-  TextEditingController createdAtController = TextEditingController();
+  late TextEditingController fNameController;
+  late TextEditingController lNameController;
+  late TextEditingController emailController;
+  late TextEditingController usernameController;
+  late TextEditingController employeeNoController;
+  late TextEditingController roleController;
+  late TextEditingController createdAtController;
 
-  File? _image;
+  XFile? _image;
   String profileUrl = '';
 
   @override
   void initState() {
     super.initState();
+    fNameController = TextEditingController();
+    lNameController = TextEditingController();
+    emailController = TextEditingController();
+    usernameController = TextEditingController();
+    employeeNoController = TextEditingController();
+    roleController = TextEditingController();
+    createdAtController = TextEditingController();
     fetchUserData();
   }
 
   Future<void> fetchUserData() async {
-    final res = await http.get(Uri.parse('http://192.168.99.139:3000/api/users/${widget.userId}'));
+    final res = await http.get(Uri.parse('http://192.168.99.139:3000/api/users/${widget.user['id']}'));
 
     if (res.statusCode == 200) {
       final data = jsonDecode(res.body);
-
-      final createdAtRaw = data['created_at'];
-      final dateTime = DateTime.tryParse(createdAtRaw);
+      final dateTime = DateTime.tryParse(data['created_at']);
       final formattedDate = dateTime != null
           ? DateFormat('yyyy-MM-dd, HH:mm').format(dateTime)
-          : createdAtRaw;
+          : data['created_at'];
 
       setState(() {
         fNameController.text = data['f_name'];
@@ -64,29 +72,37 @@ class _SettingsPageState extends State<SettingsPage> {
     final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (picked != null) {
       setState(() {
-        _image = File(picked.path);
+        _image = picked;
       });
     }
   }
 
   Future<void> updateProfile() async {
-    var uri = Uri.parse('http://192.168.99.139:3000/${widget.userId}');
+    var uri = Uri.parse('http://192.168.99.139:3000/api/users/${widget.user['id']}');
     var request = http.MultipartRequest('PUT', uri);
 
     request.fields['f_name'] = fNameController.text;
     request.fields['l_name'] = lNameController.text;
 
     if (_image != null) {
-      request.files.add(await http.MultipartFile.fromPath('p_pic', _image!.path));
+      if (kIsWeb) {
+        final bytes = await _image!.readAsBytes();
+        request.files.add(http.MultipartFile.fromBytes('p_pic', bytes, filename: _image!.name));
+      } else {
+        request.files.add(await http.MultipartFile.fromPath('p_pic', _image!.path));
+      }
     }
 
     final response = await request.send();
 
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Profile updated')));
-      fetchUserData();
+      final updatedResponse = await http.get(uri);
+      final updatedUser = jsonDecode(updatedResponse.body);
+      widget.onProfileUpdated(updatedUser);
+
+      showCustomSnackBar(context, 'Profile updated');
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Update failed')));
+      showCustomSnackBar(context, 'Update failed');
     }
   }
 
@@ -97,11 +113,7 @@ class _SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         title: const Text(
           'User Profile',
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w600,
-            fontSize: 20,
-          ),
+          style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 20),
         ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
@@ -121,10 +133,13 @@ class _SettingsPageState extends State<SettingsPage> {
                     CircleAvatar(
                       radius: 50,
                       backgroundImage: _image != null
-                          ? FileImage(_image!)
-                          : (profileUrl.isNotEmpty
-                              ? NetworkImage(profileUrl)
-                              : const AssetImage('')) as ImageProvider,
+                          ? (kIsWeb
+                              ? NetworkImage(_image!.path)
+                              : FileImage(File(_image!.path)) as ImageProvider)
+                          : (profileUrl.isNotEmpty ? NetworkImage(profileUrl) : null),
+                      child: (_image == null && profileUrl.isEmpty)
+                          ? const Icon(Icons.person, size: 50)
+                          : null,
                     ),
                     InkWell(
                       onTap: pickImage,
@@ -156,16 +171,14 @@ class _SettingsPageState extends State<SettingsPage> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromRGBO(163, 29, 29, 1),
                   foregroundColor: const Color.fromRGBO(254, 249, 225, 1),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                 ),
                 onPressed: updateProfile,
                 child: const Padding(
                   padding: EdgeInsets.symmetric(vertical: 14),
                   child: Text('Save Changes'),
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -178,27 +191,23 @@ class _SettingsPageState extends State<SettingsPage> {
     required String label,
     bool enabled = true,
   }) {
-    const fieldTextStyle = TextStyle(
-      fontFamily: 'Poppins',
-      color: Colors.black87,
-    );
-
     return TextFormField(
       controller: controller,
       enabled: enabled,
-      readOnly: !enabled,
-      style: fieldTextStyle,
+      style: const TextStyle(color: Colors.black),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: fieldTextStyle,
+        labelStyle: const TextStyle(color: Colors.black),
         filled: true,
-        fillColor: enabled ? Colors.white : Colors.grey.shade100,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(50),
-        ),
+        fillColor: enabled ? Colors.white : Colors.grey.shade300,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(50)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(50),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: const BorderSide(color: Colors.black),
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(50),
+          borderSide: const BorderSide(color: Colors.black),
         ),
       ),
     );
