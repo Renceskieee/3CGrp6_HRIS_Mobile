@@ -47,11 +47,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SizedBox(
-        height: 240,
+        height: 360, // Increase height for 2 cards per row layout
         child: GridView.count(
-          crossAxisCount: 4,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
+          crossAxisCount: 2, // Changed from 4 to 2
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
           physics: const NeverScrollableScrollPhysics(),
           children: [
             _buildIconCard(
