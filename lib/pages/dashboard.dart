@@ -1,5 +1,9 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:hris_mobile/components/navbar.dart';
 import './settings.dart';
 import 'package:hris_mobile/components/snackbar.dart';
@@ -39,8 +43,112 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
+  Widget _buildDashboardIcons() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: SizedBox(
+        height: 240,
+        child: GridView.count(
+          crossAxisCount: 4,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          physics: const NeverScrollableScrollPhysics(),
+          children: [
+            _buildIconCard(
+              iconPath: 'assets/icons/attendance.svg',
+              label: 'Attendance',
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Attendance clicked')),
+                );
+              },
+            ),
+            _buildIconCard(
+              iconPath: 'assets/icons/forms.svg',
+              label: 'Forms',
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Forms clicked')),
+                );
+              },
+            ),
+            _buildIconCard(
+              iconPath: 'assets/icons/payroll.svg',
+              label: 'Payroll',
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Payroll clicked')),
+                );
+              },
+            ),
+            _buildIconCard(
+              iconPath: 'assets/icons/request.svg',
+              label: 'Request',
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Request clicked')),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIconCard({
+    required String iconPath,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color.fromRGBO(229, 208, 172, 1),
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 4,
+              offset: const Offset(2, 2),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              iconPath,
+              width: 36,
+              height: 36,
+              color: const Color.fromRGBO(109, 35, 35, 1),
+            ),
+            const SizedBox(height: 8),
+            Flexible(
+              child: Text(
+                label,
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: const Color.fromRGBO(109, 35, 35, 1),
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildContent() {
     switch (activeNavIndex) {
+      case 0:
+        return _buildDashboardIcons();
       case 3:
         return SettingsPage(
           user: user,
@@ -49,11 +157,66 @@ class _DashboardScreenState extends State<DashboardScreen> {
       default:
         return const Center(
           child: Text(
-            'Coming Soon...',
+            'No content available.',
             style: TextStyle(fontSize: 24),
           ),
         );
     }
+  }
+
+  Widget _buildDateTimeContainer() {
+    final now = DateTime.now();
+    final time = DateFormat('hh:mm a').format(now);
+    final date = DateFormat('MMMM dd, yyyy').format(now);
+
+    return Container(
+      width: double.infinity,
+      color: const Color.fromRGBO(254, 249, 225, 1),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              SvgPicture.asset(
+                'assets/icons/clock.svg',
+                width: 20,
+                height: 20,
+                color: const Color.fromRGBO(109, 35, 35, 1),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                time,
+                style: GoogleFonts.poppins(
+                  color: const Color.fromRGBO(109, 35, 35, 1),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              SvgPicture.asset(
+                'assets/icons/calendar2.svg',
+                width: 20,
+                height: 20,
+                color: const Color.fromRGBO(109, 35, 35, 1),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                date,
+                style: GoogleFonts.poppins(
+                  color: const Color.fromRGBO(109, 35, 35, 1),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -114,10 +277,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       body: Column(
         children: [
+          if (activeNavIndex == 0) _buildDateTimeContainer(),
           Expanded(
             child: Container(
               color: Colors.white,
-              padding: const EdgeInsets.all(16),
               child: _buildContent(),
             ),
           ),

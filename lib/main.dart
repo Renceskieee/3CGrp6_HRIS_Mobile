@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../pages/login.dart';
 import '../pages/dashboard.dart';
-import '../pages/leave_form.dart';
+import 'forms/leave_form.dart';
 import '../pages/settings.dart';
 
 void main() => runApp(const EARISTHRIS());

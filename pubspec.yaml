@@ -48,3 +48,8 @@ flutter:
     - assets/icons/form.svg
     - assets/icons/home.svg
     - assets/icons/user.svg
+    - assets/icons/clock.svg
+    - assets/icons/calendar2.svg
+    - assets/icons/payroll.svg
+    - assets/icons/attendance.svg
+    - assets/icons/request.svg
