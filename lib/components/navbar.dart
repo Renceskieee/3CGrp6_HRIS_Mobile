@@ -20,7 +20,7 @@ class Sidebar extends StatelessWidget {
     return Container(
       height: 70,
       decoration: const BoxDecoration(
-        color: Color.fromRGBO(254, 249, 225, 1),
+        color: Color.fromRGBO(255, 255, 255, 1),
         border: Border(
           top: BorderSide(
             color: Color.fromRGBO(109, 35, 35, 1),
@@ -34,7 +34,7 @@ class Sidebar extends StatelessWidget {
           _buildNavItem(0, 'assets/icons/home.svg'),
           _buildNavItem(1, 'assets/icons/notification.svg'),
           _buildNavItem(2, 'assets/icons/calendar.svg'),
-          _buildNavItem(3, 'assets/icons/settings.svg'),
+          _buildNavItem(3, 'assets/icons/profile.svg'),
           _buildLogoutItem(context),
         ],
       ),

@@ -146,7 +146,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: const CircleAvatar(
                         radius: 16,
                         backgroundColor: Color.fromRGBO(163, 29, 29, 1),
-                        child: Icon(Icons.edit, size: 16, color: Color.fromRGBO(254, 249, 225, 1)),
+                        child: Icon(Icons.edit, size: 16, color: Color.fromRGBO(255, 255, 255, 1)),
                       ),
                     ),
                   ],
@@ -170,7 +170,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromRGBO(163, 29, 29, 1),
-                  foregroundColor: const Color.fromRGBO(254, 249, 225, 1),
+                  foregroundColor: const Color.fromARGB(255, 255, 255, 255),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                 ),
                 onPressed: updateProfile,

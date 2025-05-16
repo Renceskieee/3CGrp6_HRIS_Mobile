@@ -1,246 +1,131 @@
-// ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class LeaveForm extends StatefulWidget {
-  const LeaveForm({super.key});
+class LeaveRequestScreen extends StatefulWidget {
+  const LeaveRequestScreen({super.key});
 
   @override
-  State<LeaveForm> createState() => _LeaveFormState();
+  State<LeaveRequestScreen> createState() => _LeaveRequestScreenState();
 }
 
-class _LeaveFormState extends State<LeaveForm> {
+class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final departmentController = TextEditingController();
-  final lastNameController = TextEditingController();
-  final firstNameController = TextEditingController();
-  final middleNameController = TextEditingController();
-  final dateOfFilingController = TextEditingController();
-  final positionController = TextEditingController();
-  final salaryController = TextEditingController();
-  final vacationLocationController = TextEditingController();
-  final abroadLocationController = TextEditingController();
-  final sickHospitalIllnessController = TextEditingController();
-  final sickOutPatientIllnessController = TextEditingController();
-  final womenSpecialLeaveIllnessController = TextEditingController();
-  final workingDaysAppliedController = TextEditingController();
-  final inclusiveDatesController = TextEditingController();
-  final signatureController = TextEditingController();
+  DateTime? _selectedDate;
+  String? _selectedLeaveType;
 
-  bool commutationRequired = false;
-  String? studyLeaveType;
-  String? otherPurpose;
-  final List<String> selectedLeaveTypes = [];
-
-  final List<String> leaveTypes = [
-    'Vacation',
-    'Sick',
-    'Maternity',
-    'Paternity',
-    'Study',
-    'Solo Parent',
-    'Special Leave Benefits for Women',
-    'Others'
+  final List<String> _leaveTypes = [
+    'Sick Leave',
+    'Vacation Leave',
+    'Emergency Leave',
+    'Maternity Leave',
+    'Paternity Leave',
+    'Bereavement Leave',
   ];
 
-  @override
-  void dispose() {
-    departmentController.dispose();
-    lastNameController.dispose();
-    firstNameController.dispose();
-    middleNameController.dispose();
-    dateOfFilingController.dispose();
-    positionController.dispose();
-    salaryController.dispose();
-    vacationLocationController.dispose();
-    abroadLocationController.dispose();
-    sickHospitalIllnessController.dispose();
-    sickOutPatientIllnessController.dispose();
-    womenSpecialLeaveIllnessController.dispose();
-    workingDaysAppliedController.dispose();
-    inclusiveDatesController.dispose();
-    signatureController.dispose();
-    super.dispose();
+  void _pickDate() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+    );
+
+    if (picked != null) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
   }
 
-  Widget buildRoundedTextField({
-    required TextEditingController controller,
-    required String label,
-    bool enabled = true,
-  }) {
-    return TextFormField(
-      controller: controller,
-      enabled: enabled,
-      style: const TextStyle(fontFamily: 'Poppins', color: Colors.black87),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(fontFamily: 'Poppins'),
-        filled: true,
-        fillColor: enabled ? Colors.white : Colors.grey.shade100,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(25),
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Leave Submitted for $formattedDate (${_selectedLeaveType!})',
+          ),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(25),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-      ),
-    );
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
         title: const Text(
-          'Leave Form',
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w600,
-            fontSize: 20,
-          ),
+          'Leave Request Form',
+          style: TextStyle(color: Colors.white),
         ),
-        iconTheme: const IconThemeData(color: Colors.black),
+        backgroundColor: const Color.fromRGBO(109, 35, 35, 1),
+        foregroundColor: Colors.white,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20),
         child: Form(
           key: _formKey,
           child: ListView(
             children: [
-              buildRoundedTextField(controller: departmentController, label: 'Department'),
-              const SizedBox(height: 16),
-              buildRoundedTextField(controller: lastNameController, label: 'Last Name'),
-              const SizedBox(height: 16),
-              buildRoundedTextField(controller: firstNameController, label: 'First Name'),
-              const SizedBox(height: 16),
-              buildRoundedTextField(controller: middleNameController, label: 'Middle Name'),
-              const SizedBox(height: 16),
-              buildRoundedTextField(controller: dateOfFilingController, label: 'Date of Filing'),
-              const SizedBox(height: 16),
-              buildRoundedTextField(controller: positionController, label: 'Position'),
-              const SizedBox(height: 16),
-              buildRoundedTextField(controller: salaryController, label: 'Salary'),
-              const SizedBox(height: 24),
-
-              const Text(
-                'Type of Leave',
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
+              GestureDetector(
+                onTap: _pickDate,
+                child: AbsorbPointer(
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Date',
+                      border: OutlineInputBorder(),
+                      suffixIcon: Icon(Icons.calendar_today),
+                    ),
+                    validator:
+                        (value) =>
+                            _selectedDate == null
+                                ? 'Please select a date'
+                                : null,
+                    controller: TextEditingController(
+                      text:
+                          _selectedDate != null
+                              ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
+                              : '',
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
 
-              ...leaveTypes.map((leave) => CheckboxListTile(
-                    title: Text(leave, style: const TextStyle(fontFamily: 'Poppins')),
-                    value: selectedLeaveTypes.contains(leave),
-                    onChanged: (val) {
-                      setState(() {
-                        if (val == true) {
-                          selectedLeaveTypes.add(leave);
-                        } else {
-                          selectedLeaveTypes.remove(leave);
-                        }
-                      });
-                    },
-                  )),
-
-              const SizedBox(height: 16),
-
-              if (selectedLeaveTypes.contains('Vacation')) ...[
-                buildRoundedTextField(controller: vacationLocationController, label: 'Vacation Location'),
-                const SizedBox(height: 16),
-                buildRoundedTextField(controller: abroadLocationController, label: 'Abroad Location'),
-                const SizedBox(height: 16),
-              ],
-
-              if (selectedLeaveTypes.contains('Sick')) ...[
-                buildRoundedTextField(controller: sickHospitalIllnessController, label: 'Sick (In Hospital) Illness'),
-                const SizedBox(height: 16),
-                buildRoundedTextField(controller: sickOutPatientIllnessController, label: 'Sick (Out Patient) Illness'),
-                const SizedBox(height: 16),
-              ],
-
-              if (selectedLeaveTypes.contains('Special Leave Benefits for Women')) ...[
-                buildRoundedTextField(controller: womenSpecialLeaveIllnessController, label: "Women's Special Leave Illness"),
-                const SizedBox(height: 16),
-              ],
-
-              if (selectedLeaveTypes.contains('Study')) ...[
-                DropdownButtonFormField<String>(
-                  value: studyLeaveType,
-                  decoration: InputDecoration(
-                    labelText: 'Study Leave Type',
-                    labelStyle: const TextStyle(fontFamily: 'Poppins'),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(25)),
-                  ),
-                  style: const TextStyle(fontFamily: 'Poppins', color: Colors.black87),
-                  items: ['Masters', 'BAR/Board Review']
-                      .map((type) => DropdownMenuItem(
-                            value: type,
-                            child: Text(type, style: const TextStyle(fontFamily: 'Poppins')),
-                          ))
-                      .toList(),
-                  onChanged: (val) => setState(() => studyLeaveType = val),
+              DropdownButtonFormField<String>(
+                decoration: const InputDecoration(
+                  labelText: 'Type of Leave',
+                  border: OutlineInputBorder(),
                 ),
-                const SizedBox(height: 16),
-              ],
-
-              if (selectedLeaveTypes.contains('Others')) ...[
-                DropdownButtonFormField<String>(
-                  value: otherPurpose,
-                  decoration: InputDecoration(
-                    labelText: 'Other Purpose',
-                    labelStyle: const TextStyle(fontFamily: 'Poppins'),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(25)),
-                  ),
-                  style: const TextStyle(fontFamily: 'Poppins', color: Colors.black87),
-                  items: ['Monetization', 'Terminal Leave']
-                      .map((type) => DropdownMenuItem(
-                            value: type,
-                            child: Text(type, style: const TextStyle(fontFamily: 'Poppins')),
-                          ))
-                      .toList(),
-                  onChanged: (val) => setState(() => otherPurpose = val),
-                ),
-                const SizedBox(height: 16),
-              ],
-
-              buildRoundedTextField(controller: workingDaysAppliedController, label: 'Working Days Applied'),
-              const SizedBox(height: 16),
-              buildRoundedTextField(controller: inclusiveDatesController, label: 'Inclusive Dates'),
-              const SizedBox(height: 16),
-
-              SwitchListTile(
-                title: const Text('Commutation Required', style: TextStyle(fontFamily: 'Poppins')),
-                value: commutationRequired,
-                onChanged: (val) => setState(() => commutationRequired = val),
+                items:
+                    _leaveTypes
+                        .map(
+                          (type) =>
+                              DropdownMenuItem(value: type, child: Text(type)),
+                        )
+                        .toList(),
+                value: _selectedLeaveType,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedLeaveType = value;
+                  });
+                },
+                validator:
+                    (value) =>
+                        value == null ? 'Please select a leave type' : null,
               ),
-              const SizedBox(height: 16),
-
-              buildRoundedTextField(controller: signatureController, label: 'Signature of Applicant'),
-              const SizedBox(height: 24),
+              const SizedBox(height: 30),
 
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromRGBO(163, 29, 29, 1),
-                  foregroundColor: const Color.fromRGBO(254, 249, 225, 1),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
-                  ),
+                  backgroundColor: const Color.fromRGBO(109, 35, 35, 1),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                  }
-                },
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 14),
-                  child: Text('Submit', style: TextStyle(fontFamily: 'Poppins')),
+                onPressed: _submitForm,
+                child: const Text(
+                  'Submit',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
             ],

@@ -29,7 +29,7 @@ class EARISTHRIS extends StatelessWidget {
               onProfileUpdated: (Map<String, dynamic> updatedUser) {
               },
             ),
-            '/leave_form': (context) => const LeaveForm(),
+            '/leave_request': (context) => const LeaveRequestScreen(),
           },
         );
       },

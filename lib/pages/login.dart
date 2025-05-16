@@ -253,7 +253,7 @@ class LoginScreenState extends State<LoginScreen> {
                                   "Log in",
                                   style: GoogleFonts.poppins(
                                     fontSize: 18,
-                                    color: Color.fromRGBO(229, 208, 172, 1),
+                                    color: Color.fromRGBO(255, 255, 255, 1),
                                   ),
                                 ),
                               ),

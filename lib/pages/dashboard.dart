@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:hris_mobile/components/navbar.dart';
 import './settings.dart';
 import 'package:hris_mobile/components/snackbar.dart';
+import 'request.dart';
 
 class DashboardScreen extends StatefulWidget {
   final Map<String, dynamic> user;
@@ -46,52 +47,105 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildDashboardIcons() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: SizedBox(
-        height: 360, // Increase height for 2 cards per row layout
-        child: GridView.count(
-          crossAxisCount: 2, // Changed from 4 to 2
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          physics: const NeverScrollableScrollPhysics(),
-          children: [
-            _buildIconCard(
-              iconPath: 'assets/icons/attendance.svg',
-              label: 'Attendance',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Attendance clicked')),
-                );
-              },
+      child: Column(
+        children: [
+          GridView.count(
+            crossAxisCount: 4,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              _buildIconCard(
+                iconPath: 'assets/icons/attendance.svg',
+                label: 'Attendance',
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Attendance clicked')),
+                  );
+                },
+              ),
+              _buildIconCard(
+                iconPath: 'assets/icons/forms.svg',
+                label: 'Forms',
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Forms clicked')),
+                  );
+                },
+              ),
+              _buildIconCard(
+                iconPath: 'assets/icons/payroll.svg',
+                label: 'Payroll',
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Payroll clicked')),
+                  );
+                },
+              ),
+              _buildIconCard(
+                iconPath: 'assets/icons/request.svg',
+                label: 'Request',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RequestScreen(user: user),
+                    ),
+                  );
+                },
+              ),
+              _buildIconCard(
+                iconPath: 'assets/icons/organization.svg',
+                label: 'Organization',
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Organization clicked')),
+                  );
+                },
+              ),
+              _buildIconCard(
+                iconPath: 'assets/icons/contacts.svg',
+                label: 'Contacts',
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Contacts clicked')),
+                  );
+                },
+              ),
+              _buildIconCard(
+                iconPath: 'assets/icons/password.svg',
+                label: 'Password',
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Password clicked')),
+                  );
+                },
+              ),
+              _buildIconCard(
+                iconPath: 'assets/icons/ellipsis.svg',
+                label: 'More',
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('More clicked')),
+                  );
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 30),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 12),
+              child: Image.asset(
+                'assets/images/Cover.jpg',
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
             ),
-            _buildIconCard(
-              iconPath: 'assets/icons/forms.svg',
-              label: 'Forms',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Forms clicked')),
-                );
-              },
-            ),
-            _buildIconCard(
-              iconPath: 'assets/icons/payroll.svg',
-              label: 'Payroll',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Payroll clicked')),
-                );
-              },
-            ),
-            _buildIconCard(
-              iconPath: 'assets/icons/request.svg',
-              label: 'Request',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Request clicked')),
-                );
-              },
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -103,47 +157,49 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color.fromRGBO(229, 208, 172, 1),
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 4,
-              offset: const Offset(2, 2),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: const Color.fromRGBO(229, 208, 172, 1),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 4,
+                  offset: const Offset(2, 2),
+                ),
+              ],
             ),
-          ],
-        ),
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
+            padding: const EdgeInsets.all(12),
+            child: SvgPicture.asset(
               iconPath,
               width: 36,
               height: 36,
               color: const Color.fromRGBO(109, 35, 35, 1),
             ),
-            const SizedBox(height: 8),
-            Flexible(
-              child: Text(
-                label,
-                style: GoogleFonts.poppins(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: const Color.fromRGBO(109, 35, 35, 1),
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 6),
+          SizedBox(
+            width: 70,
+            child: Text(
+              label,
+              style: GoogleFonts.poppins(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: const Color.fromRGBO(109, 35, 35, 1),
               ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
+
 
   Widget _buildContent() {
     switch (activeNavIndex) {
@@ -171,51 +227,106 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     return Container(
       width: double.infinity,
-      color: const Color.fromRGBO(254, 249, 225, 1),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF6D2323), Color(0xFF8A3B3B)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SvgPicture.asset(
-                'assets/icons/clock.svg',
-                width: 20,
-                height: 20,
-                color: const Color.fromRGBO(109, 35, 35, 1),
-              ),
+              SvgPicture.asset('assets/icons/clock.svg', width: 20, height: 20, color: Colors.white),
               const SizedBox(width: 8),
               Text(
                 time,
-                style: GoogleFonts.poppins(
-                  color: const Color.fromRGBO(109, 35, 35, 1),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: GoogleFonts.poppins(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500),
               ),
-            ],
-          ),
-          Row(
-            children: [
-              SvgPicture.asset(
-                'assets/icons/calendar2.svg',
-                width: 20,
-                height: 20,
-                color: const Color.fromRGBO(109, 35, 35, 1),
-              ),
+              const SizedBox(width: 20),
+              SvgPicture.asset('assets/icons/calendar2.svg', width: 20, height: 20, color: Colors.white),
               const SizedBox(width: 8),
               Text(
                 date,
-                style: GoogleFonts.poppins(
-                  color: const Color.fromRGBO(109, 35, 35, 1),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: GoogleFonts.poppins(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500),
               ),
             ],
           ),
+          const SizedBox(height: 16),
+          const Divider(color: Colors.white),
+          const SizedBox(height: 8),
+          _buildClockButtons(),
         ],
       ),
+    );
+  }
+
+  Widget _buildClockButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        ElevatedButton.icon(
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Clock In clicked')),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+            foregroundColor: const Color.fromRGBO(109, 35, 35, 1),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50),
+            ),
+          ),
+          icon: SvgPicture.asset(
+            'assets/icons/clock-in.svg',
+            width: 20,
+            height: 20,
+            color: const Color.fromRGBO(109, 35, 35, 1),
+          ),
+          label: Text(
+            'Time In',
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+            ),
+          ),
+        ),
+        ElevatedButton.icon(
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Clock Out clicked')),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+            foregroundColor: const Color.fromRGBO(109, 35, 35, 1),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50),
+            ),
+          ),
+          icon: SvgPicture.asset(
+            'assets/icons/clock-out.svg',
+            width: 20,
+            height: 20,
+            color: const Color.fromRGBO(109, 35, 35, 1),
+          ),
+          label: Text(
+            'Time Out',
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -243,7 +354,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: Text(
                 'EARIST HRIS',
                 style: GoogleFonts.poppins(
-                  color: const Color.fromRGBO(254, 249, 225, 1),
+                  color: Colors.white,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -257,7 +368,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             padding: const EdgeInsets.only(right: 25.0),
             child: CircleAvatar(
               radius: 20,
-              backgroundColor: const Color.fromRGBO(254, 249, 225, 1),
+              backgroundColor: const Color.fromARGB(255, 255, 255, 255),
               child: profilePic != null
                   ? ClipOval(
                       child: Image.network(
@@ -278,17 +389,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: Column(
         children: [
           if (activeNavIndex == 0) _buildDateTimeContainer(),
-          Expanded(
-            child: Container(
-              color: Colors.white,
-              child: _buildContent(),
-            ),
-          ),
-          Sidebar(
-            activeIndex: activeNavIndex,
-            onNavItemSelect: handleNavItemSelect,
-          ),
+          Expanded(child: _buildContent()),
         ],
+      ),
+      bottomNavigationBar: Sidebar(
+        activeIndex: activeNavIndex,
+        onNavItemSelect: handleNavItemSelect,
       ),
     );
   }

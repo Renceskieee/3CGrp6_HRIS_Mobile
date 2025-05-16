@@ -37,6 +37,7 @@ flutter:
     - assets/
     - assets/images/EARIST_Logo.png
     - assets/images/EARIST.png
+    - assets/images/Cover.jpg
     - assets/icons/mail.svg
     - assets/icons/phone.svg
     - assets/icons/dashboard.svg
@@ -53,3 +54,10 @@ flutter:
     - assets/icons/payroll.svg
     - assets/icons/attendance.svg
     - assets/icons/request.svg
+    - assets/icons/clock-in.svg
+    - assets/icons/clock-out.svg
+    - assets/icons/profile.svg
+    - assets/icons/organization.svg
+    - assets/icons/contacts.svg
+    - assets/icons/password.svg
+    - assets/icons/ellipsis.svg
