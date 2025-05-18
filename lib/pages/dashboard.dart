@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:hris_mobile/components/navbar.dart';
+import './notifications.dart';
 import './settings.dart';
 import 'package:hris_mobile/components/snackbar.dart';
 import 'request.dart';
@@ -205,6 +206,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     switch (activeNavIndex) {
       case 0:
         return _buildDashboardIcons();
+      case 1:
+        return NotificationPage();
       case 3:
         return SettingsPage(
           user: user,

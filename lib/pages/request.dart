@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hris_mobile/forms/leave_form.dart';
+import 'package:hris_mobile/forms/payroll_form.dart';
+import 'package:hris_mobile/forms/employment_form.dart';
 
 class RequestScreen extends StatelessWidget {
   final Map<String, dynamic> user;
@@ -12,17 +14,26 @@ class RequestScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<String> categories = [
-      'Leave Request Form',
-      'Salary Loan Request',
-      'Certificate of Employment',
-      'Clearance Request',
+      'Leave Request',
+      'Payroll and Compensation Request',
+      'Employment and Documentation Request',
     ];
 
     void handleCategoryTap(String category) {
-      if (category == 'Leave Request Form') {
+      if (category == 'Leave Request') {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const LeaveRequestScreen()),
+        );
+      } else if (category == 'Payroll and Compensation Request') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const PayrollFormScreen()),
+        );
+      } else if (category == 'Employment and Documentation Request') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const EmploymentFormScreen()),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

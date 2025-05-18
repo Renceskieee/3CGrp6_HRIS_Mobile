@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:hris_mobile/components/snackbar.dart';
 
 class LeaveRequestScreen extends StatefulWidget {
   const LeaveRequestScreen({super.key});
@@ -41,12 +42,9 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Leave Submitted for $formattedDate (${_selectedLeaveType!})',
-          ),
-        ),
+      showCustomSnackBar(
+        context,
+        'Leave Submitted for $formattedDate (${_selectedLeaveType!})',
       );
     }
   }
@@ -56,7 +54,7 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Leave Request Form',
+          'Request Form',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: const Color.fromRGBO(109, 35, 35, 1),
@@ -77,46 +75,37 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
                       border: OutlineInputBorder(),
                       suffixIcon: Icon(Icons.calendar_today),
                     ),
-                    validator:
-                        (value) =>
-                            _selectedDate == null
-                                ? 'Please select a date'
-                                : null,
+                    validator: (value) =>
+                        _selectedDate == null ? 'Please select a date' : null,
                     controller: TextEditingController(
-                      text:
-                          _selectedDate != null
-                              ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
-                              : '',
+                      text: _selectedDate != null
+                          ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
+                          : '',
                     ),
                   ),
                 ),
               ),
               const SizedBox(height: 20),
-
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(
                   labelText: 'Type of Leave',
                   border: OutlineInputBorder(),
                 ),
-                items:
-                    _leaveTypes
-                        .map(
-                          (type) =>
-                              DropdownMenuItem(value: type, child: Text(type)),
-                        )
-                        .toList(),
+                items: _leaveTypes
+                    .map(
+                      (type) => DropdownMenuItem(value: type, child: Text(type)),
+                    )
+                    .toList(),
                 value: _selectedLeaveType,
                 onChanged: (value) {
                   setState(() {
                     _selectedLeaveType = value;
                   });
                 },
-                validator:
-                    (value) =>
-                        value == null ? 'Please select a leave type' : null,
+                validator: (value) =>
+                    value == null ? 'Please select a leave type' : null,
               ),
               const SizedBox(height: 30),
-
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromRGBO(109, 35, 35, 1),
