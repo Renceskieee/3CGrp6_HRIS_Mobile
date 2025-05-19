@@ -1,5 +1,5 @@
 name: hris_mobile
-description: "A new Flutter project."
+description: 'A new Flutter project.'
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -30,7 +30,7 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/images/EARIST_Logo.png"
+  image_path: 'assets/images/EARIST_Logo.png'
 
 flutter:
   uses-material-design: true

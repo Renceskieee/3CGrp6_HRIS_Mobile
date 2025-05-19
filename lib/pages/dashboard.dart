@@ -30,7 +30,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     user = widget.user;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      showCustomSnackBar(context, 'Welcome, ${user['f_name']} ${user['l_name']}');
+      showCustomSnackBar(
+        context,
+        'Welcome, ${user['f_name']} ${user['l_name']}',
+      );
     });
   }
 
@@ -92,9 +95,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 iconPath: 'assets/icons/ellipsis.svg',
                 label: 'More',
                 onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('More clicked')),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(const SnackBar(content: Text('More clicked')));
                 },
               ),
             ],
@@ -130,17 +133,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   },
                 ),
                 _buildPromoCard(
-                  iconPath: 'assets/icons/organization.svg',
-                  label: 'Organization',
-                  description: 'View your organization details.',
-                  buttonText: 'View',
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Organization clicked')),
-                    );
-                  },
-                ),
-                _buildPromoCard(
                   iconPath: 'assets/icons/contacts.svg',
                   label: 'Contacts',
                   description: 'Find and connect with colleagues.',
@@ -166,6 +158,79 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   },
                 ),
               ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: GestureDetector(
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Organization clicked')),
+                );
+              },
+              child: Container(
+                width: double.infinity,
+                height: 160,
+                decoration: BoxDecoration(
+                  color: const Color.fromRGBO(109, 35, 35, 1),
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 8,
+                      offset: const Offset(2, 4),
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.all(8),
+                            child: SvgPicture.asset(
+                              'assets/icons/organization.svg',
+                              width: 32,
+                              height: 32,
+                              color: const Color.fromRGBO(109, 35, 35, 1),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              'Organization',
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 16),
+                      Text(
+                        'View your organization details.',
+                        style: GoogleFonts.poppins(
+                          fontSize: 13,
+                          color: Colors.white,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
         ],
@@ -283,10 +348,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               const SizedBox(height: 16),
               Text(
                 description,
-                style: GoogleFonts.poppins(
-                  fontSize: 13,
-                  color: Colors.white,
-                ),
+                style: GoogleFonts.poppins(fontSize: 13, color: Colors.white),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -304,16 +366,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
       case 1:
         return NotificationPage();
       case 3:
-        return SettingsPage(
-          user: user,
-          onProfileUpdated: refreshUserProfile,
-        );
+        return SettingsPage(user: user, onProfileUpdated: refreshUserProfile);
       default:
         return const Center(
-          child: Text(
-            'No content available.',
-            style: TextStyle(fontSize: 24),
-          ),
+          child: Text('No content available.', style: TextStyle(fontSize: 24)),
         );
     }
   }
@@ -340,18 +396,36 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SvgPicture.asset('assets/icons/clock.svg', width: 20, height: 20, color: Colors.white),
+              SvgPicture.asset(
+                'assets/icons/clock.svg',
+                width: 20,
+                height: 20,
+                color: Colors.white,
+              ),
               const SizedBox(width: 8),
               Text(
                 time,
-                style: GoogleFonts.poppins(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500),
+                style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               const SizedBox(width: 20),
-              SvgPicture.asset('assets/icons/calendar2.svg', width: 20, height: 20, color: Colors.white),
+              SvgPicture.asset(
+                'assets/icons/calendar2.svg',
+                width: 20,
+                height: 20,
+                color: Colors.white,
+              ),
               const SizedBox(width: 8),
               Text(
                 date,
-                style: GoogleFonts.poppins(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500),
+                style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),
@@ -370,9 +444,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       children: [
         ElevatedButton.icon(
           onPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Clock In clicked')),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(const SnackBar(content: Text('Clock In clicked')));
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 255, 255, 255),
@@ -398,9 +472,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
         ElevatedButton.icon(
           onPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Clock Out clicked')),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(const SnackBar(content: Text('Clock Out clicked')));
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 255, 255, 255),
@@ -430,9 +504,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final profilePic = user['p_pic'] != null
-        ? 'http://192.168.137.96:3000/uploads/${user['p_pic']}'
-        : null;
+    final profilePic =
+        user['p_pic'] != null
+            ? 'http://192.168.137.1:3000/uploads/${user['p_pic']}'
+            : null;
 
     return Scaffold(
       appBar: AppBar(
@@ -467,19 +542,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: CircleAvatar(
               radius: 20,
               backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-              child: profilePic != null
-                  ? ClipOval(
-                      child: Image.network(
-                        profilePic,
-                        width: 35,
-                        height: 35,
-                        fit: BoxFit.cover,
+              child:
+                  profilePic != null
+                      ? ClipOval(
+                        child: Image.network(
+                          profilePic,
+                          width: 35,
+                          height: 35,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                      : Text(
+                        user['f_name']?[0] ?? '',
+                        style: const TextStyle(fontSize: 24),
                       ),
-                    )
-                  : Text(
-                      user['f_name']?[0] ?? '',
-                      style: const TextStyle(fontSize: 24),
-                    ),
             ),
           ),
         ],

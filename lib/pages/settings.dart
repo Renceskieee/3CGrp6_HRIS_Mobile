@@ -46,7 +46,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> fetchUserData() async {
-    final res = await http.get(Uri.parse('http://192.168.137.96:3000/api/users/${widget.user['id']}'));
+    final res = await http.get(Uri.parse('http://192.168.137.1:3000/api/users/${widget.user['id']}'));
 
     if (res.statusCode == 200) {
       final data = jsonDecode(res.body);
@@ -63,7 +63,7 @@ class _SettingsPageState extends State<SettingsPage> {
         employeeNoController.text = data['employee_number'];
         roleController.text = data['role'];
         createdAtController.text = formattedDate;
-        profileUrl = 'http://192.168.137.96:3000/uploads/${data['p_pic']}';
+        profileUrl = 'http://192.168.137.1:3000/uploads/${data['p_pic']}';
       });
     }
   }
@@ -78,7 +78,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> updateProfile() async {
-    var uri = Uri.parse('http://192.168.137.96:3000/api/users/${widget.user['id']}');
+    var uri = Uri.parse('http://192.168.137.1:3000/api/users/${widget.user['id']}');
     var request = http.MultipartRequest('PUT', uri);
 
     request.fields['f_name'] = fNameController.text;
@@ -119,68 +119,81 @@ class _SettingsPageState extends State<SettingsPage> {
         foregroundColor: Colors.black,
         elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              const SizedBox(height: 10),
-              Center(
-                child: Stack(
-                  alignment: Alignment.bottomRight,
-                  children: [
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundImage: _image != null
-                          ? (kIsWeb
-                              ? NetworkImage(_image!.path)
-                              : FileImage(File(_image!.path)) as ImageProvider)
-                          : (profileUrl.isNotEmpty ? NetworkImage(profileUrl) : null),
-                      child: (_image == null && profileUrl.isEmpty)
-                          ? const Icon(Icons.person, size: 50)
-                          : null,
+      body: SizedBox(
+        height: MediaQuery.of(context).size.height,
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const SizedBox(height: 10),
+                        Center(
+                          child: Stack(
+                            alignment: Alignment.bottomRight,
+                            children: [
+                              CircleAvatar(
+                                radius: 50,
+                                backgroundImage: _image != null
+                                    ? (kIsWeb
+                                        ? NetworkImage(_image!.path)
+                                        : FileImage(File(_image!.path)) as ImageProvider)
+                                    : (profileUrl.isNotEmpty ? NetworkImage(profileUrl) : null),
+                                child: (_image == null && profileUrl.isEmpty)
+                                    ? const Icon(Icons.person, size: 50)
+                                    : null,
+                              ),
+                              InkWell(
+                                onTap: pickImage,
+                                child: const CircleAvatar(
+                                  radius: 16,
+                                  backgroundColor: Color.fromRGBO(163, 29, 29, 1),
+                                  child: Icon(Icons.edit, size: 16, color: Color.fromRGBO(255, 255, 255, 1)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        buildRoundedTextField(controller: fNameController, label: 'First Name'),
+                        const SizedBox(height: 10),
+                        buildRoundedTextField(controller: lNameController, label: 'Last Name'),
+                        const SizedBox(height: 10),
+                        buildRoundedTextField(controller: emailController, label: 'Email', enabled: false),
+                        const SizedBox(height: 10),
+                        buildRoundedTextField(controller: usernameController, label: 'Username', enabled: false),
+                        const SizedBox(height: 10),
+                        buildRoundedTextField(controller: employeeNoController, label: 'Employee Number', enabled: false),
+                        const SizedBox(height: 10),
+                        buildRoundedTextField(controller: roleController, label: 'Role', enabled: false),
+                        const SizedBox(height: 10),
+                        buildRoundedTextField(controller: createdAtController, label: 'Created At', enabled: false),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromRGBO(163, 29, 29, 1),
+                            foregroundColor: const Color.fromARGB(255, 255, 255, 255),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                          ),
+                          onPressed: updateProfile,
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 14),
+                            child: Text('Save Changes'),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
                     ),
-                    InkWell(
-                      onTap: pickImage,
-                      child: const CircleAvatar(
-                        radius: 16,
-                        backgroundColor: Color.fromRGBO(163, 29, 29, 1),
-                        child: Icon(Icons.edit, size: 16, color: Color.fromRGBO(255, 255, 255, 1)),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-              const SizedBox(height: 20),
-              buildRoundedTextField(controller: fNameController, label: 'First Name'),
-              const SizedBox(height: 10),
-              buildRoundedTextField(controller: lNameController, label: 'Last Name'),
-              const SizedBox(height: 10),
-              buildRoundedTextField(controller: emailController, label: 'Email', enabled: false),
-              const SizedBox(height: 10),
-              buildRoundedTextField(controller: usernameController, label: 'Username', enabled: false),
-              const SizedBox(height: 10),
-              buildRoundedTextField(controller: employeeNoController, label: 'Employee Number', enabled: false),
-              const SizedBox(height: 10),
-              buildRoundedTextField(controller: roleController, label: 'Role', enabled: false),
-              const SizedBox(height: 10),
-              buildRoundedTextField(controller: createdAtController, label: 'Created At', enabled: false),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromRGBO(163, 29, 29, 1),
-                  foregroundColor: const Color.fromARGB(255, 255, 255, 255),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-                ),
-                onPressed: updateProfile,
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 14),
-                  child: Text('Save Changes'),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

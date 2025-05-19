@@ -26,11 +26,11 @@ class EARISTHRIS extends StatelessWidget {
             '/login': (context) => const LoginScreen(),
             '/dashboard': (context) => const DashboardScreen(user: {}),
             '/notifications': (context) => const NotificationPage(),
-            '/settings': (context) => SettingsPage(
-              user: const {},
-              onProfileUpdated: (Map<String, dynamic> updatedUser) {
-              },
-            ),
+            '/settings':
+                (context) => SettingsPage(
+                  user: const {},
+                  onProfileUpdated: (Map<String, dynamic> updatedUser) {},
+                ),
             '/leave_request': (context) => const LeaveRequestScreen(),
           },
         );

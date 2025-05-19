@@ -7,14 +7,14 @@ const path = require('path');
 
 const app = express();
 const PORT = 3000;
-const HOST = "192.168.137.96";
+const HOST = '192.168.137.1';
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/'),
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     cb(null, uniqueSuffix + path.extname(file.originalname));
-  }
+  },
 });
 const upload = multer({ storage });
 
@@ -26,7 +26,7 @@ const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: '',
-  database: 'testdb'
+  database: 'testdb',
 });
 
 db.connect((err) => {
@@ -41,7 +41,9 @@ app.post('/login', (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
-    return res.status(400).json({ message: 'Username and Password are required' });
+    return res
+      .status(400)
+      .json({ message: 'Username and Password are required' });
   }
 
   const sql = 'SELECT * FROM users WHERE username = ?';
@@ -72,7 +74,7 @@ app.post('/login', (req, res) => {
         l_name: user.l_name,
         role: user.role,
         p_pic: user.p_pic,
-      }
+      },
     });
   });
 });
@@ -83,11 +85,15 @@ app.put('/api/users/:id', upload.single('p_pic'), async (req, res) => {
   const p_pic = req.file ? req.file.filename : null;
 
   if (!f_name || !l_name) {
-    return res.status(400).json({ error: 'First name and last name are required' });
+    return res
+      .status(400)
+      .json({ error: 'First name and last name are required' });
   }
 
   try {
-    const [users] = await db.promise().query('SELECT * FROM users WHERE id = ?', [id]);
+    const [users] = await db
+      .promise()
+      .query('SELECT * FROM users WHERE id = ?', [id]);
     if (users.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -116,7 +122,12 @@ app.get('/api/users/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    const [rows] = await db.promise().query('SELECT id, email, username, role, employee_number, f_name, l_name, p_pic, created_at FROM users WHERE id = ?', [id]);
+    const [rows] = await db
+      .promise()
+      .query(
+        'SELECT id, email, username, role, employee_number, f_name, l_name, p_pic, created_at FROM users WHERE id = ?',
+        [id]
+      );
     if (rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }

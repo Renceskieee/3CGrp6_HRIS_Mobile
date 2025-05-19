@@ -41,10 +41,7 @@ class LoginScreenState extends State<LoginScreen> {
   String _errorMessage = '';
 
   void showModal(BuildContext context, Widget modal) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) => modal,
-    );
+    showDialog(context: context, builder: (BuildContext context) => modal);
   }
 
   Future<void> _login() async {
@@ -64,12 +61,9 @@ class LoginScreenState extends State<LoginScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.137.96:3000/login'),
+        Uri.parse('http://192.168.137.1:3000/login'),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'username': username,
-          'password': password,
-        }),
+        body: json.encode({'username': username, 'password': password}),
       );
 
       if (!mounted) return;
@@ -84,7 +78,6 @@ class LoginScreenState extends State<LoginScreen> {
             builder: (context) => DashboardScreen(user: data['user']),
           ),
         );
-
       } else {
         final data = json.decode(response.body);
         setState(() {
@@ -130,10 +123,7 @@ class LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 40),
-              Image.asset(
-                'assets/images/EARIST_Logo.png',
-                height: 100,
-              ),
+              Image.asset('assets/images/EARIST_Logo.png', height: 100),
               const SizedBox(height: 10),
               Text(
                 "H.R.I.S.",
@@ -156,7 +146,10 @@ class LoginScreenState extends State<LoginScreen> {
                   Container(
                     margin: const EdgeInsets.only(top: 135),
                     width: MediaQuery.of(context).size.width,
-                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 50,
+                    ),
                     decoration: const BoxDecoration(
                       color: Color.fromRGBO(254, 249, 225, 1),
                       borderRadius: BorderRadius.only(
@@ -206,7 +199,9 @@ class LoginScreenState extends State<LoginScreen> {
                             ),
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                _isPasswordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
                                 color: Color.fromRGBO(163, 29, 29, 1),
                               ),
                               onPressed: () {
@@ -236,33 +231,37 @@ class LoginScreenState extends State<LoginScreen> {
                         _isLoading
                             ? const CircularProgressIndicator()
                             : ElevatedButton(
-                                onPressed: _login,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color.fromRGBO(163, 29, 29, 1),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  side: const BorderSide(
-                                    color: Color.fromRGBO(109, 35, 35, 1),
-                                    width: 1,
-                                  ),
-                                  padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
-                                  minimumSize: const Size(double.infinity, 50),
+                              onPressed: _login,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color.fromRGBO(163, 29, 29, 1),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25),
                                 ),
-                                child: Text(
-                                  "Log in",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 18,
-                                    color: Color.fromRGBO(255, 255, 255, 1),
-                                  ),
+                                side: const BorderSide(
+                                  color: Color.fromRGBO(109, 35, 35, 1),
+                                  width: 1,
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 60,
+                                  vertical: 15,
+                                ),
+                                minimumSize: const Size(double.infinity, 50),
+                              ),
+                              child: Text(
+                                "Log in",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 18,
+                                  color: Color.fromRGBO(255, 255, 255, 1),
                                 ),
                               ),
+                            ),
                         const SizedBox(height: 100),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             TextButton(
-                              onPressed: () => showModal(context, const AboutModal()),
+                              onPressed:
+                                  () => showModal(context, const AboutModal()),
                               child: Text(
                                 "About",
                                 style: GoogleFonts.poppins(
@@ -271,11 +270,17 @@ class LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                             ),
-                            Text("|",
-                                style: GoogleFonts.poppins(
-                                    fontSize: 12, color: Color.fromRGBO(163, 29, 29, 1))),
+                            Text(
+                              "|",
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                color: Color.fromRGBO(163, 29, 29, 1),
+                              ),
+                            ),
                             TextButton(
-                              onPressed: () => showModal(context, const ContactModal()),
+                              onPressed:
+                                  () =>
+                                      showModal(context, const ContactModal()),
                               child: Text(
                                 "Contact",
                                 style: GoogleFonts.poppins(
@@ -284,11 +289,17 @@ class LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                             ),
-                            Text("|",
-                                style: GoogleFonts.poppins(
-                                    fontSize: 12, color: Color.fromRGBO(163, 29, 29, 1))),
+                            Text(
+                              "|",
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                color: Color.fromRGBO(163, 29, 29, 1),
+                              ),
+                            ),
                             TextButton(
-                              onPressed: () => showModal(context, const PrivacyModal()),
+                              onPressed:
+                                  () =>
+                                      showModal(context, const PrivacyModal()),
                               child: Text(
                                 "Privacy Policy",
                                 style: GoogleFonts.poppins(

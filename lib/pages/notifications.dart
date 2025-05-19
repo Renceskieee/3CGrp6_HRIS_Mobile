@@ -27,7 +27,7 @@ class _NotificationPageState extends State<NotificationPage> {
   }
 
   void _initSocket() {
-    socket = IO.io('http://192.168.137.96:3000', <String, dynamic>{
+    socket = IO.io('http://192.168.137.1:3000', <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': true,
     });
@@ -56,7 +56,9 @@ class _NotificationPageState extends State<NotificationPage> {
   }
 
   Future<void> _initLocalNotifications() async {
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings = AndroidInitializationSettings(
+      '@mipmap/ic_launcher',
+    );
     const initSettings = InitializationSettings(android: androidSettings);
     await flutterLocalNotificationsPlugin.initialize(initSettings);
   }
@@ -64,26 +66,29 @@ class _NotificationPageState extends State<NotificationPage> {
   Future<void> _showLocalNotification(String event, dynamic payload) async {
     final id = DateTime.now().millisecondsSinceEpoch % 100000;
 
-    final AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-      'db_channel',
-      'Database Events',
-      channelDescription: 'Notification when the database changes',
-      importance: Importance.max,
-      priority: Priority.high,
-      showWhen: true,
-    );
+    final AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+          'db_channel',
+          'Database Events',
+          channelDescription: 'Notification when the database changes',
+          importance: Importance.max,
+          priority: Priority.high,
+          showWhen: true,
+        );
 
-    final title = event == 'added'
-        ? 'New Record Added'
-        : event == 'updated'
+    final title =
+        event == 'added'
+            ? 'New Record Added'
+            : event == 'updated'
             ? 'Record Updated'
             : event == 'deleted'
-                ? 'Record Deleted'
-                : 'Database Change';
+            ? 'Record Deleted'
+            : 'Database Change';
 
-    final body = event == 'deleted'
-        ? 'ID: ${payload['id']}'
-        : '${payload['name']} (ID: ${payload['id']})';
+    final body =
+        event == 'deleted'
+            ? 'ID: ${payload['id']}'
+            : '${payload['name']} (ID: ${payload['id']})';
 
     await flutterLocalNotificationsPlugin.show(
       id,
@@ -112,60 +117,61 @@ class _NotificationPageState extends State<NotificationPage> {
           const SizedBox(width: 16),
         ],
       ),
-      body: notifications.isEmpty
-          ? const Center(
-              child: Text(
-                'No notifications yet.\nWaiting for database events...',
-                textAlign: TextAlign.center,
+      body:
+          notifications.isEmpty
+              ? const Center(
+                child: Text(
+                  'No notifications yet.\nWaiting for database events...',
+                  textAlign: TextAlign.center,
+                ),
+              )
+              : ListView.builder(
+                itemCount: notifications.length,
+                itemBuilder: (context, index) {
+                  final notif = notifications[index];
+                  final time = DateTime.parse(notif['time']);
+                  final event = notif['event'];
+                  final payload = notif['payload'];
+
+                  IconData icon;
+                  Color iconColor;
+
+                  switch (event) {
+                    case 'added':
+                      icon = Icons.add_circle_outline;
+                      iconColor = Colors.green;
+                      break;
+                    case 'updated':
+                      icon = Icons.edit;
+                      iconColor = Colors.orange;
+                      break;
+                    case 'deleted':
+                      icon = Icons.delete_outline;
+                      iconColor = Colors.red;
+                      break;
+                    default:
+                      icon = Icons.notifications_active;
+                      iconColor = Colors.blue;
+                  }
+
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: iconColor.withOpacity(0.1),
+                      child: Icon(icon, color: iconColor),
+                    ),
+                    title: Text(
+                      event == 'deleted'
+                          ? 'Record Deleted (ID: ${payload['id']})'
+                          : '${payload['name']} (ID: ${payload['id']})',
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    subtitle: Text(
+                      '${event.toUpperCase()} • ${_formatTime(time)}',
+                      style: TextStyle(color: iconColor, fontSize: 12),
+                    ),
+                  );
+                },
               ),
-            )
-          : ListView.builder(
-              itemCount: notifications.length,
-              itemBuilder: (context, index) {
-                final notif = notifications[index];
-                final time = DateTime.parse(notif['time']);
-                final event = notif['event'];
-                final payload = notif['payload'];
-
-                IconData icon;
-                Color iconColor;
-
-                switch (event) {
-                  case 'added':
-                    icon = Icons.add_circle_outline;
-                    iconColor = Colors.green;
-                    break;
-                  case 'updated':
-                    icon = Icons.edit;
-                    iconColor = Colors.orange;
-                    break;
-                  case 'deleted':
-                    icon = Icons.delete_outline;
-                    iconColor = Colors.red;
-                    break;
-                  default:
-                    icon = Icons.notifications_active;
-                    iconColor = Colors.blue;
-                }
-
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: iconColor.withOpacity(0.1),
-                    child: Icon(icon, color: iconColor),
-                  ),
-                  title: Text(
-                    event == 'deleted'
-                        ? 'Record Deleted (ID: ${payload['id']})'
-                        : '${payload['name']} (ID: ${payload['id']})',
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  subtitle: Text(
-                    '${event.toUpperCase()} • ${_formatTime(time)}',
-                    style: TextStyle(color: iconColor, fontSize: 12),
-                  ),
-                );
-              },
-            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() {

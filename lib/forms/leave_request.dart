@@ -14,6 +14,7 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
 
   DateTime? _selectedDate;
   String? _selectedLeaveType;
+  String? _submissionMessage;
 
   final List<String> _leaveTypes = [
     'Sick Leave',
@@ -42,10 +43,10 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
-      showCustomSnackBar(
-        context,
-        'Leave Submitted for $formattedDate (${_selectedLeaveType!})',
-      );
+      setState(() {
+        _submissionMessage =
+            'Leave Submitted for $formattedDate (${_selectedLeaveType!})';
+      });
     }
   }
 
@@ -54,70 +55,234 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Request Form',
-          style: TextStyle(color: Colors.white),
+          'Leave Request',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         backgroundColor: const Color.fromRGBO(109, 35, 35, 1),
         foregroundColor: Colors.white,
+        elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              GestureDetector(
-                onTap: _pickDate,
-                child: AbsorbPointer(
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'Date',
-                      border: OutlineInputBorder(),
-                      suffixIcon: Icon(Icons.calendar_today),
-                    ),
-                    validator: (value) =>
-                        _selectedDate == null ? 'Please select a date' : null,
-                    controller: TextEditingController(
-                      text: _selectedDate != null
-                          ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
-                          : '',
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color.fromRGBO(109, 35, 35, 1), Colors.white],
+            stops: [0.0, 0.3],
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Request Details',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromRGBO(109, 35, 35, 1),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            GestureDetector(
+                              onTap: _pickDate,
+                              child: AbsorbPointer(
+                                child: TextFormField(
+                                  decoration: InputDecoration(
+                                    labelText: 'Date',
+                                    labelStyle: const TextStyle(
+                                      color: Color.fromRGBO(109, 35, 35, 1),
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(
+                                        color: Color.fromRGBO(109, 35, 35, 1),
+                                      ),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(
+                                        color: Color.fromRGBO(109, 35, 35, 1),
+                                        width: 2,
+                                      ),
+                                    ),
+                                    suffixIcon: const Icon(
+                                      Icons.calendar_today,
+                                      color: Color.fromRGBO(109, 35, 35, 1),
+                                    ),
+                                  ),
+                                  validator:
+                                      (value) =>
+                                          _selectedDate == null
+                                              ? 'Please select a date'
+                                              : null,
+                                  controller: TextEditingController(
+                                    text:
+                                        _selectedDate != null
+                                            ? DateFormat(
+                                              'yyyy-MM-dd',
+                                            ).format(_selectedDate!)
+                                            : '',
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            DropdownButtonFormField<String>(
+                              decoration: InputDecoration(
+                                labelText: 'Type of Leave',
+                                labelStyle: const TextStyle(
+                                  color: Color.fromRGBO(109, 35, 35, 1),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: Color.fromRGBO(109, 35, 35, 1),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: Color.fromRGBO(109, 35, 35, 1),
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                              items:
+                                  _leaveTypes
+                                      .map(
+                                        (type) => DropdownMenuItem(
+                                          value: type,
+                                          child: Text(type),
+                                        ),
+                                      )
+                                      .toList(),
+                              value: _selectedLeaveType,
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedLeaveType = value;
+                                });
+                              },
+                              validator:
+                                  (value) =>
+                                      value == null
+                                          ? 'Please select a leave type'
+                                          : null,
+                            ),
+                            const SizedBox(height: 20),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color.fromRGBO(
+                                    109,
+                                    35,
+                                    35,
+                                    1,
+                                  ),
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  elevation: 2,
+                                ),
+                                onPressed: _submitForm,
+                                child: const Text(
+                                  'Submit Request',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            if (_submissionMessage != null) ...[
+                              const SizedBox(height: 25),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 25,
+                                  horizontal: 16,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color.fromRGBO(109, 35, 35, 0.1),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: const Color.fromRGBO(109, 35, 35, 1),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(
+                                      Icons.check_circle,
+                                      color: Color.fromRGBO(109, 35, 35, 1),
+                                      size: 30,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        _submissionMessage!,
+                                        style: const TextStyle(
+                                          color: Color.fromRGBO(109, 35, 35, 1),
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(),
+                                      icon: const Icon(
+                                        Icons.close,
+                                        color: Color.fromRGBO(109, 35, 35, 1),
+                                        size: 25,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _submissionMessage = null;
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-              const SizedBox(height: 20),
-              DropdownButtonFormField<String>(
-                decoration: const InputDecoration(
-                  labelText: 'Type of Leave',
-                  border: OutlineInputBorder(),
-                ),
-                items: _leaveTypes
-                    .map(
-                      (type) => DropdownMenuItem(value: type, child: Text(type)),
-                    )
-                    .toList(),
-                value: _selectedLeaveType,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedLeaveType = value;
-                  });
-                },
-                validator: (value) =>
-                    value == null ? 'Please select a leave type' : null,
-              ),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromRGBO(109, 35, 35, 1),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                ),
-                onPressed: _submitForm,
-                child: const Text(
-                  'Submit',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),

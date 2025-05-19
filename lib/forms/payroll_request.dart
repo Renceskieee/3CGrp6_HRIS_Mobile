@@ -14,6 +14,7 @@ class _PayrollRequestScreenState extends State<PayrollRequestScreen> {
 
   DateTime? _selectedDate;
   String? _selectedPayrollRequest;
+  String? _submissionMessage;
 
   final List<String> _payrollRequests = [
     'Payslip Reprint',
@@ -40,10 +41,9 @@ class _PayrollRequestScreenState extends State<PayrollRequestScreen> {
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
-      showCustomSnackBar(
-        context,
-        'Request Submitted for $formattedDate (${_selectedPayrollRequest!})',
-      );
+      setState(() {
+        _submissionMessage = 'Request Submitted for $formattedDate (${_selectedPayrollRequest!})';
+      });
     }
   }
 
@@ -52,69 +52,224 @@ class _PayrollRequestScreenState extends State<PayrollRequestScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Request Form',
-          style: TextStyle(color: Colors.white),
+          'Payroll Request Form',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         backgroundColor: const Color.fromRGBO(109, 35, 35, 1),
         foregroundColor: Colors.white,
+        elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              GestureDetector(
-                onTap: _pickDate,
-                child: AbsorbPointer(
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'Date',
-                      border: OutlineInputBorder(),
-                      suffixIcon: Icon(Icons.calendar_today),
-                    ),
-                    validator: (value) =>
-                        _selectedDate == null ? 'Please select a date' : null,
-                    controller: TextEditingController(
-                      text: _selectedDate != null
-                          ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
-                          : '',
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color.fromRGBO(109, 35, 35, 1), Colors.white],
+            stops: [0.0, 0.3],
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Request Details',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromRGBO(109, 35, 35, 1),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            GestureDetector(
+                              onTap: _pickDate,
+                              child: AbsorbPointer(
+                                child: TextFormField(
+                                  decoration: InputDecoration(
+                                    labelText: 'Date',
+                                    labelStyle: const TextStyle(
+                                      color: Color.fromRGBO(109, 35, 35, 1),
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(
+                                        color: Color.fromRGBO(109, 35, 35, 1),
+                                      ),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(
+                                        color: Color.fromRGBO(109, 35, 35, 1),
+                                        width: 2,
+                                      ),
+                                    ),
+                                    suffixIcon: const Icon(
+                                      Icons.calendar_today,
+                                      color: Color.fromRGBO(109, 35, 35, 1),
+                                    ),
+                                  ),
+                                  validator: (value) =>
+                                      _selectedDate == null ? 'Please select a date' : null,
+                                  controller: TextEditingController(
+                                    text: _selectedDate != null
+                                        ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
+                                        : '',
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            DropdownButtonFormField<String>(
+                              decoration: InputDecoration(
+                                labelText: 'Request Type',
+                                labelStyle: const TextStyle(
+                                  color: Color.fromRGBO(109, 35, 35, 1),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: Color.fromRGBO(109, 35, 35, 1),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: Color.fromRGBO(109, 35, 35, 1),
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                              items: _payrollRequests
+                                  .map(
+                                    (type) => DropdownMenuItem(
+                                      value: type,
+                                      child: Text(type),
+                                    ),
+                                  )
+                                  .toList(),
+                              value: _selectedPayrollRequest,
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedPayrollRequest = value;
+                                });
+                              },
+                              validator: (value) =>
+                                  value == null ? 'Please select a request type' : null,
+                            ),
+                            const SizedBox(height: 20),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color.fromRGBO(
+                                    109,
+                                    35,
+                                    35,
+                                    1,
+                                  ),
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  elevation: 2,
+                                ),
+                                onPressed: _submitForm,
+                                child: const Text(
+                                  'Submit Request',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            if (_submissionMessage != null) ...[
+                              const SizedBox(height: 12),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                  horizontal: 16,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color.fromRGBO(109, 35, 35, 0.1),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: const Color.fromRGBO(109, 35, 35, 1),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(
+                                      Icons.check_circle,
+                                      color: Color.fromRGBO(109, 35, 35, 1),
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        _submissionMessage!,
+                                        style: const TextStyle(
+                                          color: Color.fromRGBO(109, 35, 35, 1),
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(),
+                                      icon: const Icon(
+                                        Icons.close,
+                                        color: Color.fromRGBO(109, 35, 35, 1),
+                                        size: 20,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _submissionMessage = null;
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-              const SizedBox(height: 20),
-              DropdownButtonFormField<String>(
-                decoration: const InputDecoration(
-                  labelText: 'Request Type',
-                  border: OutlineInputBorder(),
-                ),
-                items: _payrollRequests
-                    .map((type) =>
-                        DropdownMenuItem(value: type, child: Text(type)))
-                    .toList(),
-                value: _selectedPayrollRequest,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedPayrollRequest = value;
-                  });
-                },
-                validator: (value) =>
-                    value == null ? 'Please select a request type' : null,
-              ),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromRGBO(109, 35, 35, 1),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                ),
-                onPressed: _submitForm,
-                child: const Text(
-                  'Submit',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
