@@ -7,7 +7,7 @@ const path = require('path');
 
 const app = express();
 const PORT = 3000;
-const HOST = "192.168.99.139";
+const HOST = "192.168.137.96";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/'),

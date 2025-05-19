@@ -2,9 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:hris_mobile/forms/leave_form.dart';
-import 'package:hris_mobile/forms/payroll_form.dart';
-import 'package:hris_mobile/forms/employment_form.dart';
+import 'package:hris_mobile/forms/leave_request.dart';
+import 'package:hris_mobile/forms/payroll_request.dart';
+import 'package:hris_mobile/forms/employment_request.dart';
 
 class RequestScreen extends StatelessWidget {
   final Map<String, dynamic> user;
@@ -28,12 +28,12 @@ class RequestScreen extends StatelessWidget {
       } else if (category == 'Payroll and Compensation Request') {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const PayrollFormScreen()),
+          MaterialPageRoute(builder: (context) => const PayrollRequestScreen()),
         );
       } else if (category == 'Employment and Documentation Request') {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const EmploymentFormScreen()),
+          MaterialPageRoute(builder: (context) => const EmploymentRequestScreen()),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

@@ -2,25 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:hris_mobile/components/snackbar.dart';
 
-class EmploymentFormScreen extends StatefulWidget {
-  const EmploymentFormScreen({super.key});
+class PayrollRequestScreen extends StatefulWidget {
+  const PayrollRequestScreen({super.key});
 
   @override
-  State<EmploymentFormScreen> createState() => _EmploymentFormScreenState();
+  State<PayrollRequestScreen> createState() => _PayrollRequestScreenState();
 }
 
-class _EmploymentFormScreenState extends State<EmploymentFormScreen> {
+class _PayrollRequestScreenState extends State<PayrollRequestScreen> {
   final _formKey = GlobalKey<FormState>();
 
   DateTime? _selectedDate;
-  String? _selectedEmploymentRequest;
+  String? _selectedPayrollRequest;
 
-  final List<String> _employmentRequests = [
-    'Certificate of Employment (COE)',
-    'Employment Verification',
-    'Service Record',
-    'Clearance Request',
-    'ID or Badge Replacement',
+  final List<String> _payrollRequests = [
+    'Payslip Reprint',
+    'Salary Loan Request',
+    'Bonus/Commission Claim',
+    'Salary Adjustment Inquiry',
   ];
 
   void _pickDate() async {
@@ -43,7 +42,7 @@ class _EmploymentFormScreenState extends State<EmploymentFormScreen> {
       final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
       showCustomSnackBar(
         context,
-        'Request Submitted for $formattedDate (${_selectedEmploymentRequest!})',
+        'Request Submitted for $formattedDate (${_selectedPayrollRequest!})',
       );
     }
   }
@@ -90,14 +89,14 @@ class _EmploymentFormScreenState extends State<EmploymentFormScreen> {
                   labelText: 'Request Type',
                   border: OutlineInputBorder(),
                 ),
-                items: _employmentRequests
+                items: _payrollRequests
                     .map((type) =>
                         DropdownMenuItem(value: type, child: Text(type)))
                     .toList(),
-                value: _selectedEmploymentRequest,
+                value: _selectedPayrollRequest,
                 onChanged: (value) {
                   setState(() {
-                    _selectedEmploymentRequest = value;
+                    _selectedPayrollRequest = value;
                   });
                 },
                 validator: (value) =>

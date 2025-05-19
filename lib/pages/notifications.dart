@@ -27,7 +27,7 @@ class _NotificationPageState extends State<NotificationPage> {
   }
 
   void _initSocket() {
-    socket = IO.io('http://192.168.99.139:3000', <String, dynamic>{
+    socket = IO.io('http://192.168.137.96:3000', <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': true,
     });

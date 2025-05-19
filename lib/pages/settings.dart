@@ -46,7 +46,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> fetchUserData() async {
-    final res = await http.get(Uri.parse('http://192.168.99.139:3000/api/users/${widget.user['id']}'));
+    final res = await http.get(Uri.parse('http://192.168.137.96:3000/api/users/${widget.user['id']}'));
 
     if (res.statusCode == 200) {
       final data = jsonDecode(res.body);
@@ -63,7 +63,7 @@ class _SettingsPageState extends State<SettingsPage> {
         employeeNoController.text = data['employee_number'];
         roleController.text = data['role'];
         createdAtController.text = formattedDate;
-        profileUrl = 'http://192.168.99.139:3000/uploads/${data['p_pic']}';
+        profileUrl = 'http://192.168.137.96:3000/uploads/${data['p_pic']}';
       });
     }
   }
@@ -78,7 +78,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> updateProfile() async {
-    var uri = Uri.parse('http://192.168.99.139:3000/api/users/${widget.user['id']}');
+    var uri = Uri.parse('http://192.168.137.96:3000/api/users/${widget.user['id']}');
     var request = http.MultipartRequest('PUT', uri);
 
     request.fields['f_name'] = fNameController.text;

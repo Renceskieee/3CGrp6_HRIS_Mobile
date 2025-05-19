@@ -9,6 +9,7 @@ import './notifications.dart';
 import './settings.dart';
 import 'package:hris_mobile/components/snackbar.dart';
 import 'request.dart';
+import './change_password.dart';
 
 class DashboardScreen extends StatefulWidget {
   final Map<String, dynamic> user;
@@ -67,15 +68,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 },
               ),
               _buildIconCard(
-                iconPath: 'assets/icons/forms.svg',
-                label: 'Forms',
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Forms clicked')),
-                  );
-                },
-              ),
-              _buildIconCard(
                 iconPath: 'assets/icons/payroll.svg',
                 label: 'Payroll',
                 onTap: () {
@@ -93,33 +85,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     MaterialPageRoute(
                       builder: (context) => RequestScreen(user: user),
                     ),
-                  );
-                },
-              ),
-              _buildIconCard(
-                iconPath: 'assets/icons/organization.svg',
-                label: 'Organization',
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Organization clicked')),
-                  );
-                },
-              ),
-              _buildIconCard(
-                iconPath: 'assets/icons/contacts.svg',
-                label: 'Contacts',
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Contacts clicked')),
-                  );
-                },
-              ),
-              _buildIconCard(
-                iconPath: 'assets/icons/password.svg',
-                label: 'Password',
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Password clicked')),
                   );
                 },
               ),
@@ -144,6 +109,63 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
+            ),
+          ),
+          const SizedBox(height: 30),
+          SizedBox(
+            height: 170,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              children: [
+                _buildPromoCard(
+                  iconPath: 'assets/icons/forms.svg',
+                  label: 'Forms',
+                  description: 'Submit and manage your forms easily.',
+                  buttonText: 'Open',
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Forms clicked')),
+                    );
+                  },
+                ),
+                _buildPromoCard(
+                  iconPath: 'assets/icons/organization.svg',
+                  label: 'Organization',
+                  description: 'View your organization details.',
+                  buttonText: 'View',
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Organization clicked')),
+                    );
+                  },
+                ),
+                _buildPromoCard(
+                  iconPath: 'assets/icons/contacts.svg',
+                  label: 'Contacts',
+                  description: 'Find and connect with colleagues.',
+                  buttonText: 'Browse',
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Contacts clicked')),
+                    );
+                  },
+                ),
+                _buildPromoCard(
+                  iconPath: 'assets/icons/password.svg',
+                  label: 'Password',
+                  description: 'Change your account password.',
+                  buttonText: 'Change',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChangePasswordScreen(user: user),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
         ],
@@ -176,18 +198,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
             padding: const EdgeInsets.all(12),
             child: SvgPicture.asset(
               iconPath,
-              width: 36,
-              height: 36,
+              width: 28,
+              height: 28,
               color: const Color.fromRGBO(109, 35, 35, 1),
             ),
           ),
           const SizedBox(height: 6),
           SizedBox(
-            width: 70,
+            width: 60,
             child: Text(
               label,
               style: GoogleFonts.poppins(
-                fontSize: 10,
+                fontSize: 9,
                 fontWeight: FontWeight.w600,
                 color: const Color.fromRGBO(109, 35, 35, 1),
               ),
@@ -201,6 +223,79 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  Widget _buildPromoCard({
+    required String iconPath,
+    required String label,
+    required String description,
+    required String buttonText,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 220,
+        height: 160,
+        margin: const EdgeInsets.only(right: 16),
+        decoration: BoxDecoration(
+          color: const Color.fromRGBO(109, 35, 35, 1),
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 8,
+              offset: const Offset(2, 4),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.all(8),
+                    child: SvgPicture.asset(
+                      iconPath,
+                      width: 32,
+                      height: 32,
+                      color: const Color.fromRGBO(109, 35, 35, 1),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      label,
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                description,
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  color: Colors.white,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget _buildContent() {
     switch (activeNavIndex) {
@@ -336,7 +431,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final profilePic = user['p_pic'] != null
-        ? 'http://192.168.99.139:3000/uploads/${user['p_pic']}'
+        ? 'http://192.168.137.96:3000/uploads/${user['p_pic']}'
         : null;
 
     return Scaffold(
@@ -389,11 +484,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          if (activeNavIndex == 0) _buildDateTimeContainer(),
-          Expanded(child: _buildContent()),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            if (activeNavIndex == 0) _buildDateTimeContainer(),
+            _buildContent(),
+          ],
+        ),
       ),
       bottomNavigationBar: Sidebar(
         activeIndex: activeNavIndex,
